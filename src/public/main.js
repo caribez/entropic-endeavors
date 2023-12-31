@@ -1,5 +1,5 @@
 function sendButtonPress(buttonId) {
-  fetch('http://localhost:3000/buttonPress', {
+  fetch('https://entropic-endeavors.onrender.com:3000/buttonPress', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
