@@ -27,7 +27,7 @@ app.post('/buttonPress', (req, res) => {
 });
 
 // Set the port for the server to listen on
-const PORT = 3000; // default to 3000
+const PORT =  process.env.PORT || 3000; // use environment port, or default to 3000
 
 // Start the server
 app.listen(PORT, () => {
