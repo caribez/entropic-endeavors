@@ -20,14 +20,16 @@ app.get('/', (req, res) => {
 });
 
 app.get('/reset', (req, res) => {
-  value += req.query.value;
+  value = 0;
 });
 
 // Endpoint to handle POST requests (for audience button presses)
 app.post('/buttonPress', (req, res) => {
   const { buttonId } = req.body;
+  value += buttonId;
   // Process the button press data here, update variables, etc.
   console.log(`Button ${buttonId} pressed`);
+  console.log(`value: ${value}`);
   res.status(200).send('Button press received successfully!');
 });
 
