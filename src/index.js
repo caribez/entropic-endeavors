@@ -9,6 +9,7 @@ const app = express();
 // Middleware to parse incoming JSON data
 app.use(bodyParser.json());
 
+let value = 0;
 
 // Serve static files (HTML, CSS, JS) from a directory named 'public'
 app.use(express.static(path.join(__dirname, 'public')));
@@ -16,6 +17,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Endpoint to handle GET requests
 app.get('/', (req, res) => {
   res.send('Welcome to the interactive musical performance server!');
+});
+
+app.get('/reset', (req, res) => {
+  value += req.query.value;
 });
 
 // Endpoint to handle POST requests (for audience button presses)
