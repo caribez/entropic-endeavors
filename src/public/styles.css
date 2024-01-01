@@ -1,46 +1,64 @@
-/* Default styles for all devices */
 body {
-  font-family: 'Times New Roman', Times, serif;
-  background-color: #f5f5f5;
-  text-align: center;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f2f2f2;
 }
 
-button {
-  font-family: 'Bookman Old Style', serif;
-  font-size: 18px;
-  padding: 10px 20px;
+.circle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.circle button {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
   margin: 10px;
-  border: none;
-  border-radius: 5px;
-  background-color: #6495ED;
-  color: #FFFFFF;
+  border: 2px solid #3498db;
+  font-size: 16px;
+  background-color: #3498db;
+  color: white;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
 }
 
-button:hover {
-  background-color: #4169E1;
+.circle button:hover {
+  background-color: #2980b9;
 }
 
 #status {
-  margin-top: 30px;
-  font-family: 'Garamond', serif;
-  font-size: 24px;
-  color: #2E8B57;
+  margin-top: 20px;
+  font-size: 18px;
+  color: #333;
 }
 
-/* Media query for smaller devices (phones) */
-@media only screen and (max-width: 768px) {
-  body {
-    font-size: 16px; /* Adjust font size for smaller screens */
+/* Media queries for responsiveness */
+
+@media screen and (max-width: 768px) {
+  .circle {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
   }
 
-  button {
-    font-size: 14px; /* Decrease button font size */
-    padding: 8px 16px; /* Reduce button padding */
+  .circle button {
+    width: 100px;
+    height: 100px;
+    margin: 8px;
+    font-size: 14px;
   }
+}
 
-  #status {
-    font-size: 20px; /* Adjust status font size */
+@media screen and (max-width: 480px) {
+  .circle button {
+    width: 80px;
+    height: 80px;
+    margin: 6px;
+    font-size: 12px;
   }
 }
