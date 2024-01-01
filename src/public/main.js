@@ -1,3 +1,16 @@
+document.addEventListener("DOMContentLoaded", () => {
+
+  let btn1 = document.querySelector('#button1');
+  let btn2 = document.querySelector('#button2'); 
+
+btn1.addEventListener('click', () => {
+  sendButtonPress(1);
+});
+btn2.addEventListener('click', () => {
+  sendButtonPress(2);
+});
+
+  
 function sendButtonPress(buttonId) {
   fetch('https://entropic-endeavors.onrender.com/buttonPress', {
     method: 'POST',
@@ -23,3 +36,5 @@ function sendButtonPress(buttonId) {
     console.error('There was a problem with the fetch operation:', error);
   });
 }
+
+}); // end of document loaded listener
