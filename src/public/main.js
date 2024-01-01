@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-  let btn1 = document.querySelector('#button1');
-  let btn2 = document.querySelector('#button2'); 
+  let btn1 = document.querySelector('#btn1');
+  let btn2 = document.querySelector('#btn2'); 
 
 btn1.addEventListener('click', () => {
   sendButtonPress(1);
