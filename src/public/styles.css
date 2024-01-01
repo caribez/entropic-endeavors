@@ -1,0 +1,46 @@
+/* Default styles for all devices */
+body {
+  font-family: 'Times New Roman', Times, serif;
+  background-color: #f5f5f5;
+  text-align: center;
+}
+
+button {
+  font-family: 'Bookman Old Style', serif;
+  font-size: 18px;
+  padding: 10px 20px;
+  margin: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #6495ED;
+  color: #FFFFFF;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #4169E1;
+}
+
+#status {
+  margin-top: 30px;
+  font-family: 'Garamond', serif;
+  font-size: 24px;
+  color: #2E8B57;
+}
+
+/* Media query for smaller devices (phones) */
+@media only screen and (max-width: 768px) {
+  body {
+    font-size: 16px; /* Adjust font size for smaller screens */
+  }
+
+  button {
+    font-size: 14px; /* Decrease button font size */
+    padding: 8px 16px; /* Reduce button padding */
+  }
+
+  #status {
+    font-size: 20px; /* Adjust status font size */
+  }
+}
