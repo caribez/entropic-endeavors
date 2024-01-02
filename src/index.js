@@ -12,7 +12,9 @@ app.use(bodyParser.json());
 let value = 0;
 
 // Serve static files (HTML, CSS, JS) from a directory named 'public'
-app.use(express.static(path.join(__dirname, 'public')));
+app.use('/', express.static(path.join(__dirname, 'public')));
+app.use('/score', express.static(path.join(__dirname, 'score-view')));
+
 
 // Endpoint to handle GET requests
 app.get('/', (req, res) => {
