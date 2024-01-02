@@ -81,7 +81,8 @@
         .then(data => {
           if (data.text.length > 0) {
             currentMessage = data.text;          
-            fade = 255;
+            fadeIn = true;
+            fadeInStart = millis(); // Record the start time for the fade in effect
             xPos = random(width);
             yPos = random(height);
           }
