@@ -38,6 +38,11 @@ app.get('/messages', (req, res) => {
   const messages = [
     { text: "Entropic" },
     { text: "Endeavors" },
+    { text: "Swiftly" },
+    { text: "Whispers" },    
+    { text: "Stormy" },        
+    { text: "Warmth" },            
+    { text: "Soothing" },                
   ];
   const randomMessage = messages[Math.floor(Math.random() * messages.length)];
   res.json(randomMessage);
