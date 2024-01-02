@@ -1,10 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
 
   const directions = [ 
-    {'buttonId': 'up', 'x': 0, 'y': 1},
-    {'buttonId': 'right', 'x': 1, 'y': 0},
-    {'buttonId': 'down', 'x': 0, 'y': -1},
-    {'buttonId': 'left', 'x': -1, 'y': 0},
+    {'buttonId': 'up', 'x': 0, 'y': 1, 'text': 'Stormy'},
+    {'buttonId': 'right', 'x': 1, 'y': 0, 'text': 'Swiftly'},
+    {'buttonId': 'down', 'x': 0, 'y': -1, 'text': 'Whispers'},
+    {'buttonId': 'left', 'x': -1, 'y': 0, 'text': 'Warmth'},
   ]
     
 
