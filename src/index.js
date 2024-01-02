@@ -26,8 +26,14 @@ app.get('/reset', (req, res) => {
   res.sendStatus(200); // Sends a response with HTTP status code 200 (OK)
 });
 
+// Handle GET request for messages
 app.get('/messages', (req, res) => {
-    res.send('Successful Endeavors!');
+  const messages = [
+    { text: "Entropic" },
+    { text: "Endeavors" },
+  ];
+  const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+  res.json(randomMessage);
 });
 
 // Endpoint to handle POST requests (for audience button presses)
