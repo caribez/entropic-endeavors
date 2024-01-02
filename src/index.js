@@ -56,7 +56,7 @@ app.get('/messages', (req, res) => {
 app.post('/buttonPress', (req, res) => {
   const button = req.body;
 
-  messages.push(button.text);
+  messages.push({ 'text': button.text });
   
   console.log(button.buttonId + " button pressed by a user")
   direction.x += button.x;
