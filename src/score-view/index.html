@@ -43,7 +43,7 @@
 
     function getMessage() {
       fetch('/messages')
-        .then(response => response.text())
+        .then(response => response.json())
         .then(data => {
           messages = data.messages;
           if (messages.length > 0) {
