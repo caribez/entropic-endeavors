@@ -19,14 +19,21 @@
     // Your p5.js code goes here
     let messages = [];
     let currentMessage = '';
-    let fade = 0;
+    let fadeDuration = 2000; // Duration of fade effect in milliseconds
+    let displayDuration = 4000; // Duration to display the message in milliseconds
+    let fadeInStart = 0;
+    let fadeOutStart = 0;
+    let displayStart = 0;
+    let fadeIn = false;
+    let fadeOut = false;
+    let displaying = false;
     let xPos, yPos;
 
     function setup() {
       createCanvas(windowWidth, windowHeight);
       xPos = random(width);
       yPos = random(height);
-      setInterval(getMessage, 3000);
+      getMessage(); // Fetch a message immediately upon starting the sketch
     }
 
     function draw() {
@@ -34,11 +41,38 @@
       fill(0);
       textSize(32);
 
-      if (fade > 0) {
-        fade -= 5;
-      }
-      fill(0, fade);
-      text(currentMessage, xPos, yPos);
+  if (fadeIn) {
+    let fadeInElapsedTime = millis() - fadeInStart;
+    let fadeInAlpha = map(fadeInElapsedTime, 0, fadeDuration, 0, 255);
+    fill(0, fadeInAlpha);
+    text(currentMessage, xPos, yPos);
+    
+    if (fadeInElapsedTime > fadeDuration) {
+      fadeIn = false;
+      displaying = true;
+      displayStart = millis();
+    }
+  } else if (displaying) {
+    text(currentMessage, xPos, yPos);
+
+    let displayElapsedTime = millis() - displayStart;
+    if (displayElapsedTime > displayDuration) {
+      displaying = false;
+      fadeOut = true;
+      fadeOutStart = millis();
+    }
+  } else if (fadeOut) {
+    let fadeOutElapsedTime = millis() - fadeOutStart;
+    let fadeOutAlpha = map(fadeOutElapsedTime, 0, fadeDuration, 255, 0);
+    fill(0, fadeOutAlpha);
+    text(currentMessage, xPos, yPos);
+
+    if (fadeOutElapsedTime > fadeDuration) {
+      fadeOut = false;
+      getMessage(); // Fetch a new message after fade out
+    }
+  }
+
     }
 
     function getMessage() {
