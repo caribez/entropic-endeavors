@@ -26,6 +26,10 @@ app.get('/reset', (req, res) => {
   res.sendStatus(200); // Sends a response with HTTP status code 200 (OK)
 });
 
+app.get('/messages', (req, res) => {
+    res.send('Successful Endeavors!');
+}
+
 // Endpoint to handle POST requests (for audience button presses)
 app.post('/buttonPress', (req, res) => {
   const { buttonId } = req.body;
