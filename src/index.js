@@ -28,7 +28,7 @@ app.get('/reset', (req, res) => {
 
 app.get('/messages', (req, res) => {
     res.send('Successful Endeavors!');
-}
+});
 
 // Endpoint to handle POST requests (for audience button presses)
 app.post('/buttonPress', (req, res) => {
