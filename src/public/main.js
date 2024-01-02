@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 function sendButtonPress(buttonId) {
-  fetch('https://entropic-endeavors.onrender.com/buttonPress', {
+  fetch('/buttonPress', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
