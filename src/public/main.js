@@ -1,23 +1,33 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-  let btn1 = document.querySelector('#btn1');
-  let btn2 = document.querySelector('#btn2'); 
+  const directions = [ 
+    {'buttonId': 'up', 'x': 0, 'y': 1},
+    {'buttonId': 'right', 'x': 1, 'y': 0},
+    {'buttonId': 'down', 'x': 0, 'y': -1},
+    {'buttonId': 'left', 'x': -1, 'y': 0},
+  ]
+    
 
-btn1.addEventListener('click', () => {
-  sendButtonPress(1);
-});
-btn2.addEventListener('click', () => {
-  sendButtonPress(2);
-});
-
+  const buttons = [
+    document.querySelector('#up-btn'),
+    document.querySelector('#right-btn'),
+    document.querySelector('#down-btn'),
+    document.querySelector('#left-btn'),
+  ];
   
+  for (let i = 0; i < buttons.length; i++) {
+    buttons[i].addEventListener('click', () => {
+      sendButtonPress(directions[i]);
+    });
+  }
+
 function sendButtonPress(buttonId) {
   fetch('https://entropic-endeavors.onrender.com/buttonPress', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ buttonId })
+    body: JSON.stringify(buttonId)
   })
   .then(response => {
     if (!response.ok) {
