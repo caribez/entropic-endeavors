@@ -45,9 +45,8 @@
       fetch('/messages')
         .then(response => response.json())
         .then(data => {
-          messages = data.messages;
-          if (messages.length > 0) {
-            currentMessage = messages[Math.floor(random(messages.length))];
+          if (data.text.length > 0) {
+            currentMessage = data.text;          
             fade = 255;
             xPos = random(width);
             yPos = random(height);
