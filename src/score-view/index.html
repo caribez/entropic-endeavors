@@ -20,7 +20,7 @@
     let messages = [];
     let currentMessage = '';
     let fadeDuration = 2000; // Duration of fade effect in milliseconds
-    let displayDuration = 4000; // Duration to display the message in milliseconds
+    let displayDuration = 1000; // Duration to display the message in milliseconds : SET SHORT FOR TESTING PURPOSES
     let fadeInStart = 0;
     let fadeOutStart = 0;
     let displayStart = 0;
@@ -39,7 +39,7 @@
     function draw() {
       background(220);
       fill(0);
-      textSize(32);
+      textSize(48);
 
   if (fadeIn) {
     let fadeInElapsedTime = millis() - fadeInStart;
