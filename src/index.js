@@ -17,6 +17,18 @@ const direction = {
   'yNorm': 0
 };
 
+const messages = [
+  { text: "Entropic" },
+  { text: "Endeavors" },
+  /*
+  { text: "Swiftly" },
+  { text: "Whispers" },    
+  { text: "Stormy" },        
+  { text: "Warmth" },            
+  { text: "Soothing" },                
+  */
+];
+
 
 // Serve static files (HTML, CSS, JS) from a directory named 'public'
 app.use('/', express.static(path.join(__dirname, 'public')));
@@ -35,15 +47,7 @@ app.get('/reset', (req, res) => {
 
 // Handle GET request for messages
 app.get('/messages', (req, res) => {
-  const messages = [
-    { text: "Entropic" },
-    { text: "Endeavors" },
-    { text: "Swiftly" },
-    { text: "Whispers" },    
-    { text: "Stormy" },        
-    { text: "Warmth" },            
-    { text: "Soothing" },                
-  ];
+
   const randomMessage = messages[Math.floor(Math.random() * messages.length)];
   res.json(randomMessage);
 });
@@ -51,6 +55,9 @@ app.get('/messages', (req, res) => {
 // Endpoint to handle POST requests (for audience button presses)
 app.post('/buttonPress', (req, res) => {
   const button = req.body;
+
+  messages.push(button.text);
+  
   console.log(button.buttonId + " button pressed by a user")
   direction.x += button.x;
   direction.y += button.y;
