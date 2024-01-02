@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+    <title>Entropic Endeavors - Score View</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    // Your p5.js code goes here
+    let messages = [];
+    let currentMessage = '';
+    let fade = 0;
+    let xPos, yPos;
+
+    function setup() {
+      createCanvas(windowWidth, windowHeight);
+      xPos = random(width);
+      yPos = random(height);
+      setInterval(getMessage, 3000);
+    }
+
+    function draw() {
+      background(220);
+      fill(0);
+      textSize(32);
+
+      if (fade > 0) {
+        fade -= 5;
+      }
+      fill(0, fade);
+      text(currentMessage, xPos, yPos);
+    }
+
+    function getMessage() {
+      fetch('/messages')
+        .then(response => response.json())
+        .then(data => {
+          messages = data.messages;
+          if (messages.length > 0) {
+            currentMessage = messages[Math.floor(random(messages.length))];
+            fade = 255;
+            xPos = random(width);
+            yPos = random(height);
+          }
+        })
+        .catch(error => {
+          console.log('Error fetching messages:', error);
+        });
+    }
+  </script>
+</body>
+</html>
