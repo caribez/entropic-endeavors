@@ -9,56 +9,71 @@ body {
 }
 
 .circle {
+  width: 66vw; /* Responsive width for the circle */
+  height: 66vw; /* Responsive height for the circle */
+  border: 8px solid #3498db;
+  border-radius: 50%;
   display: flex;
-  flex-direction: column;
+  justify-content: space-around; /* Space out the button containers */
   align-items: center;
+  flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+  padding: 2.5vw; /* Adjust padding for responsiveness */
 }
 
-.circle button {
-  width: 120px;
-  height: 120px;
+/* Styles for the status div */
+#status {
+  position: absolute;
+  width: 100vw; /* Make it stretch the full width of .circle */
+  text-align: center;
+  margin-top: 20vw; /* Adjust margin for space below the circle */
+  bottom: 10vw; /* Adjust this value to set the distance between circle and status */
+}
+
+
+
+.button-container:nth-child(1) { transform: translate(-50%, -50%) rotate(0deg) translate(35.5vw) rotate(-0deg); }
+.button-container:nth-child(2) { transform: translate(-50%, -50%) rotate(90deg) translate(35.5vw) rotate(-90deg); }
+.button-container:nth-child(3) { transform: translate(-50%, -50%) rotate(180deg) translate(35.5vw) rotate(-180deg); }
+.button-container:nth-child(4) { transform: translate(-50%, -50%) rotate(270deg) translate(35.5vw) rotate(-270deg); }
+
+/* ... Your existing styles ... */
+
+.button-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-origin: center center;
+  display: flex; /* Add display flex */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+}
+
+/* Adjust button styles */
+button {
+  width: 25vw;
+  height: 25vw;
   border-radius: 50%;
-  margin: 10px;
-  border: 2px solid #3498db;
-  font-size: 16px;
   background-color: #3498db;
   color: white;
+  border: none;
+  font-size: 4vw;
   cursor: pointer;
-  transition: all 0.3s ease;
+  /* Remove margins to ensure accurate centering */
+  transition: background-color 0.3s ease;
 }
 
-.circle button:hover {
+#up-btn {
+   background-color: #db8943;
+}
+
+#down-btn {
+   background-color: #bd8349;
+}
+
+/* ... Rest of your styles ... */
+
+
+
+button:hover {
   background-color: #2980b9;
-}
-
-#status {
-  margin-top: 20px;
-  font-size: 18px;
-  color: #333;
-}
-
-/* Media queries for responsiveness */
-
-@media screen and (max-width: 768px) {
-  .circle {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .circle button {
-    width: 100px;
-    height: 100px;
-    margin: 8px;
-    font-size: 14px;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .circle button {
-    width: 80px;
-    height: 80px;
-    margin: 6px;
-    font-size: 12px;
-  }
 }
