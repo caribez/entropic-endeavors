@@ -18,8 +18,8 @@ const direction = {
 };
 
 const messages = [
-  { text: "Entropic" },
-  { text: "Endeavors" },
+  { 'text': "Entropic" },
+  { 'text': "Endeavors" },
   /*
   { text: "Swiftly" },
   { text: "Whispers" },    
