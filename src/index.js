@@ -78,6 +78,9 @@ app.get('/messages', (req, res) => {
   res.json(randomMessage[0]);
 });
 
-server.listen(3000, () => {
+// Set the port for the server to listen on
+const PORT =  process.env.PORT || 3000; // use environment port, or default to 3000
+
+server.listen(PORT, () => {
   console.log('Server is running on port 3000');
 });
