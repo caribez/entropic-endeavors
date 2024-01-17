@@ -48,6 +48,13 @@
                 yPos = random(height);
               }
             });
+
+      socket.on('messageReceived', () => {
+        if (fadeOut || fadeIn || displaying) {
+          return;
+        }
+        getMessage(); // No fade going on, so just fetch the new message.
+      });
     }
 
     function draw() {
