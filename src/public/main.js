@@ -32,4 +32,4 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log('Received updated direction:', updatedDirection);
     // Update UI or perform actions based on the updated direction
   });
-});p
+});
