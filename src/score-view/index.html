@@ -40,6 +40,7 @@
       
       getMessage();
       socket.on('newMessage', (data) => {
+                console.log(data); // DEBUGGING
               if (data.text.length > 0) {
                 currentMessage = data.text;
                 fadeIn = true;
