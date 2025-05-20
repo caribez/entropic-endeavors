@@ -35,6 +35,7 @@ function setup() {
     btn.style('color', 'white');
     btn.style('font-size', '1rem');
     btn.mousePressed(() => {
+      console.log("Sending:", direction);  // Debug      
       socket.emit('buttonPress', direction);
     });
     buttons.push(btn);
