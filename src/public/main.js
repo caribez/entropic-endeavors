@@ -1,35 +1,49 @@
-document.addEventListener("DOMContentLoaded", () => {
 
-  const directions = [ 
-    {'buttonId': 'up', 'x': 0, 'y': 1, 'text': 'Stormy'},
-    {'buttonId': 'right', 'x': 1, 'y': 0, 'text': 'Swiftly'},
-    {'buttonId': 'down', 'x': 0, 'y': -1, 'text': 'Whispers'},
-    {'buttonId': 'left', 'x': -1, 'y': 0, 'text': 'Warmth'},
+let socket;
+let buttons = [];
+
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+  angleMode(DEGREES);
+
+  socket = io();
+
+  const directions  = [
+    { id: 'up', angle: 270, label: 'Loud Storm', color: '#db8943' },
+    { id: 'right', angle: 0, label: 'Swift Winds', color: '#3498db' },
+    { id: 'down', angle: 90, label: 'Whispers', color: '#bd8349' },
+    { id: 'left', angle: 180, label: 'Warmth', color: '#3498db' },
   ];
 
-  const buttons = [
-    document.querySelector('#up-btn'),
-    document.querySelector('#right-btn'),
-    document.querySelector('#down-btn'),
-    document.querySelector('#left-btn'),
-  ];
+  const radius = min(width, height) * 0.3;
 
-  const socket = io();
-
-  // Function to emit 'buttonPress' event to the server
-  function emitButtonPress(buttonId) {
-    socket.emit('buttonPress', buttonId);
-  }
-
-  // Attach button click listeners
-  for (let i = 0; i < buttons.length; i++) {
-    buttons[i].addEventListener('click', () => {
-      emitButtonPress(directions[i]);
+  directions.forEach(direction => {
+    const angle = direction.angle;
+    const radius = min(width, height) * 0.3;
+    const xPos = width / 2 + radius * cos(angle);
+    const yPos = height / 2 + radius * sin(angle);
+  
+    // Add directional vector to dir object
+    direction.x = cos(angle);
+    direction.y = sin(angle);
+  
+    const btn = createButton(direction.label);
+    btn.position(xPos - 50, yPos - 50);
+    btn.size(100, 100);
+    btn.style('border-radius', '50%');
+    btn.style('background-color', direction.color);
+    btn.style('color', 'white');
+    btn.style('font-size', '1rem');
+    btn.mousePressed(() => {
+      socket.emit('buttonPress', direction);
     });
-  }
+    buttons.push(btn);
 
-  socket.on('updateDirection', (updatedDirection) => {
-    console.log('Received updated direction:', updatedDirection);
-    // Update UI or perform actions based on the updated direction
   });
-});
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+  buttons.forEach(btn => btn.remove());
+  setup(); // Recreate layout on resize
+}
