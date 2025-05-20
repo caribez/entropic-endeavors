@@ -41,7 +41,7 @@
       getMessage();
       socket.on('newMessage', (data) => {
               if (data.text.length > 0) {
-                currentMessage = data.label;
+                currentMessage = data.text;
                 fadeIn = true;
                 fadeInStart = millis(); // Record the start time for the fade in effect
                 xPos = random(width);
