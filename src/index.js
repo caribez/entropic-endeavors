@@ -16,13 +16,19 @@ app.use('/', express.static(path.join(__dirname, 'public')));
 
 app.use('/score', express.static(path.join(__dirname, 'score-view')));
 
-
-
 const messages = [
   { 'text': "Entropic" },
   { 'text': "Endeavors" },
   /* ... */
 ];
+
+function resetPerformance() {
+  messages = [
+    { 'text': "Entropic" },
+    { 'text': "Endeavors" },
+    /* ... */
+  ];
+}
 
 const mutex = new Mutex(); // Create a mutex object
 
@@ -36,9 +42,15 @@ io.on('connection', (socket) => {
     release(); // Release the lock
   });
 
+  socket.on('start-performance', async () => {
+    console.log('start-performance');
+    // Reset
+    resetPerformance();
+  });
+
   socket.on('buttonPress', async (button) => {
     const release = await mutex.acquire(); // Acquire the lock
-    messages.push({ 'text': button.label });
+    messages.push({ 'text': button.text });
     io.emit('messageReceived');
     release(); // Release the lock
   });
