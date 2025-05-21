@@ -48,7 +48,7 @@ io.on('connection', (socket) => {
 
   socket.on('buttonPress', async (button) => {
     const release = await mutex.acquire(); // Acquire the lock
-    messages.push({ 'text': button.text });
+    messages.push({ 'text': button.label });
     io.emit('messageReceived');
     release(); // Release the lock
   });
