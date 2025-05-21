@@ -18,6 +18,8 @@
 <body>
   <script>
     // Your p5.js code goes here
+    let startButton;
+    let performanceRunning = false;
     let messages = [];
     let currentMessage = '';
     let fadeDuration = 2000; // Duration of fade effect in milliseconds
@@ -37,6 +39,24 @@
       createCanvas(windowWidth, windowHeight);
       xPos = random(width);
       yPos = random(height);
+
+      startButton = createButton('Start');
+      startButton.position(height / 20, width / 20);
+      startButton.size(100, 50);
+      
+      startButton.mousePressed(() => {
+        if (performanceRunning == false) {
+          socket.emit('start-performance');
+          performanceRunning = true;
+          startButton.html("Stop");
+        }
+        else if (performanceRunning == true) {
+          socket.emit('stop-performance');
+          performanceRunning = false;
+          startButton.html("Start");
+        }
+      //startButton.remove();
+    });
       
       getMessage();
       socket.on('newMessage', (data) => {
