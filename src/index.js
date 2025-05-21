@@ -23,11 +23,9 @@ const messages = [
 ];
 
 function resetPerformance() {
-  messages = [
-    { 'text': "Entropic" },
-    { 'text': "Endeavors" },
-    /* ... */
-  ];
+  messages.length = 0;
+  messages.push({ 'text': "Entropic" });
+  messages.push({ 'text': "Endeavors" });
 }
 
 const mutex = new Mutex(); // Create a mutex object
@@ -77,11 +75,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/reset', (req, res) => {
-  messages = [
-    { 'text': "Entropic" },
-    { 'text': "Endeavors" },
-    /* ... */
-  ];
+  resetPerformance();
   res.sendStatus(200);
 });
 
