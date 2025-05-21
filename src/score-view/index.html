@@ -110,7 +110,9 @@
 
     if (fadeOutElapsedTime > fadeDuration) {
       fadeOut = false;
-      getMessage(); // Fetch a new message after fade out
+      if (performanceRunning) {
+        getMessage(); // Fetch a new message after fade out
+      }
     }
   }
 
