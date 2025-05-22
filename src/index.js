@@ -22,6 +22,13 @@ const messages = [
   /* ... */
 ];
 
+const clientMessages = [
+  { 'text': "Warmth" },
+  { 'text': "Swift Wind" },
+  { 'text': "Whispers" },
+  { 'text': "Loud Storm" },
+];
+
 function resetPerformance() {
   messages.length = 0;
   messages.push({ 'text': "Entropic" });
@@ -49,13 +56,16 @@ io.on('connection', (socket) => {
   socket.on('buttonPress', async (button) => {
     const release = await mutex.acquire(); // Acquire the lock
     messages.push({ 'text': button.label });
+    clientMessages.push({ 'text': button.label});
     io.emit('messageReceived');
 
     // Sends a new label back to the client
     // Button id  to make sure we know which button to change
     // Label will be new text for that button
-    // TO DO: get label from a random list that the clients can change with a text prompt 
-    socket.emit('newLabel', { id: button.id, label: 'RandomWord' });
+    // Get label from a list of all possible words.
+    const randomIndex = Math.floor(Math.random() * clientMessages.length);
+    const randomMessage = clientMessages[randomIndex];
+    socket.emit('newLabel', { id: button.id, label: randomMessage });
 
     release(); // Release the lock
   });
