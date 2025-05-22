@@ -39,8 +39,15 @@ function setup() {
       socket.emit('buttonPress', direction);
     });
     buttons.push(btn);
-
   });
+
+  socket.on('newLabel', (data) => {
+    let buttonID = data.id;
+    let label = data.label;
+    const index = directions.findIndex(dir => dir.id === buttonID);
+    buttons[index].html(label);  // Update visible text on button
+    directions[index].label = label;
+  });  
 }
 
 function windowResized() {
