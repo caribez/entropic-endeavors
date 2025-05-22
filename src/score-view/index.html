@@ -24,7 +24,8 @@
     let currentMessage = '';
     let fadeDuration = 2000; // Duration of fade effect in milliseconds
     let displayDuration = 1000; // Duration to display the message in milliseconds : SET SHORT FOR TESTING PURPOSES
-    let opacity = 5;
+    let backgroundOpacity = 2;
+    let textOpacity = 5;
     let fadeInStart = 0;
     let fadeOutStart = 0;
     let displayStart = 0;
@@ -79,7 +80,7 @@
     }
 
     function draw() {
-      background(220, opacity);
+      background(220, backgroundOpacity);
       //fill(0);
       textSize(48);
 
@@ -87,7 +88,7 @@
     let fadeInElapsedTime = millis() - fadeInStart;
     let fadeInAlpha = map(fadeInElapsedTime, 0, fadeDuration, 0, 255);
     //fill(0, fadeInAlpha);
-    fill (0, 5);
+    fill (0, textOpacity);
     text(currentMessage, xPos, yPos);
     
     if (fadeInElapsedTime > fadeDuration) {
