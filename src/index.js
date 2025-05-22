@@ -50,6 +50,13 @@ io.on('connection', (socket) => {
     const release = await mutex.acquire(); // Acquire the lock
     messages.push({ 'text': button.label });
     io.emit('messageReceived');
+
+    // Sends a new label back to the client
+    // Button id  to make sure we know which button to change
+    // Label will be new text for that button
+    // TO DO: get label from a random list that the clients can change with a text prompt 
+    socket.emit('newLabel', { id: button.id, label: 'RandomWord' });
+
     release(); // Release the lock
   });
 
