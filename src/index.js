@@ -64,7 +64,7 @@ io.on('connection', (socket) => {
     // Label will be new text for that button
     // Get label from a list of all possible words.
     const randomIndex = Math.floor(Math.random() * clientMessages.length);
-    const randomMessage = clientMessages[randomIndex];
+    const randomMessage = clientMessages[randomIndex].text;
     socket.emit('newLabel', { id: button.id, label: randomMessage });
 
     release(); // Release the lock
