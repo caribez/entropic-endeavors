@@ -65,6 +65,8 @@ function setup() {
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
   buttons.forEach(btn => btn.remove());
+  textInput.remove();
+  sendTextButton.remove();
   setup(); // Recreate layout on resize
 }
 
