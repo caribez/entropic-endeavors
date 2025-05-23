@@ -70,6 +70,6 @@ function windowResized() {
 
 function sendText() {
   const textValue = input.value();
-  socket.emit('textInput', {message: textValue});
+  socket.emit('textInput', {text: textValue});
   input.value('');
 }

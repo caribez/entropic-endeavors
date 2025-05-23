@@ -53,6 +53,14 @@ io.on('connection', (socket) => {
     resetPerformance();
   });
 
+  socket.on('textInput', async (message) => {
+    const release = await mutex.acquire(); // Acquire the lock
+    clientMessages.push({ 'text': message.text});
+
+    release(); // Release the lock
+
+  });
+
   socket.on('buttonPress', async (button) => {
     const release = await mutex.acquire(); // Acquire the lock
     messages.push({ 'text': button.label });
