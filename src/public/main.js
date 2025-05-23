@@ -10,8 +10,8 @@ function setup() {
 
   socket = io();
 
-  input = createInput();
-  input.position(width / 2 - input.width/2, height / 3);
+  textInput = createInput();
+  textInput.position(width / 2 - input.width/2, height / 3);
   
   sendTextButton = createButton('Send Text');
   sendTextButton.size(100, 100);
@@ -71,7 +71,7 @@ function windowResized() {
 }
 
 function sendText() {
-  const textValue = input.value();
+  const textValue = textInput.value();
   socket.emit('textInput', {text: textValue});
-  input.value('');
+  textInput.value('');
 }
