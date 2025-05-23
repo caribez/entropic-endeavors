@@ -1,12 +1,24 @@
 
 let socket;
 let buttons = [];
+let textInput;
+let sendTextButton;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   angleMode(DEGREES);
 
   socket = io();
+
+  input = createInput();
+  input.position(width / 2 - input.width/2, height / 3);
+  
+  sendTextButton = createButton('Send Text');
+  sendTextButton.size(100, 100);
+  sendTextButton.style('font-size', '1rem');
+  sendTextButton.position(input.x + input.width/2 - sendTextButton.width/2, input.y + input.height + 10);  
+  sendTextButton.mousePressed(sendText);
+
 
   const directions  = [
     { id: 'up', angle: 270, label: 'Loud Storm', color: '#db8943' },
@@ -54,4 +66,10 @@ function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
   buttons.forEach(btn => btn.remove());
   setup(); // Recreate layout on resize
+}
+
+function sendText() {
+  const textValue = input.value();
+  socket.emit('textInput', {message: textValue});
+  input.value('');
 }
