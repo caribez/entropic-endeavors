@@ -30,7 +30,7 @@ function createUI() {
   if (sendTextButton) sendTextButton.remove();
 
   textInput = createInput();
-  textInput.position(width / 2 - 100, height / 3);
+  textInput.position(width / 2 - 100, height - height / 3);
 
   sendTextButton = createButton('Send Text');
   sendTextButton.size(100, 40);
