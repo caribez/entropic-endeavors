@@ -55,8 +55,13 @@ io.on('connection', (socket) => {
 
   socket.on('textInput', async (message) => {
     const release = await mutex.acquire(); // Acquire the lock
-    clientMessages.push({ 'text': message.text});
+    
+    clientMessages.push({ 'text': message.text}); //Push to list for updating client buttons
 
+    // Also push it out to the screen
+    messages.push({ 'text': message.text}); 
+    sendMessageToClient();
+    
     release(); // Release the lock
 
   });
