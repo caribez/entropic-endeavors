@@ -1,0 +1,22 @@
+# Node modules
+node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+
+# OS junk
+.DS_Store
+
+# IDEs/editors
+.vscode/
+.idea/
+
+# Optional: build output
+dist/
+build/
+
