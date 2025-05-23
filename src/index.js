@@ -59,8 +59,8 @@ io.on('connection', (socket) => {
     clientMessages.push({ 'text': message.text}); //Push to list for updating client buttons
 
     // Also push it out to the screen
-    messages.push({ 'text': message.text}); 
-    sendMessageToClient();
+    //messages.push({ 'text': message.text}); 
+    //sendMessageToClient();
     
     release(); // Release the lock
 
