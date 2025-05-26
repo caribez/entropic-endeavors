@@ -24,7 +24,7 @@ function setup() {
     buttons[index].style('background-color', cssColor);
     directions[index].color = cssColor;
     directions[index].label = label;
-  });  
+  });
 }
 
 function createUI() {
@@ -79,6 +79,6 @@ function windowResized() {
 
 function sendText() {
   const textValue = textInput.value();
-  socket.emit('textInput', {text: textValue});
+  socket.emit('textInput', { text: textValue });
   textInput.value('');
 }

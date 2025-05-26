@@ -1,5 +1,5 @@
 
-const __DEV__ = true; // manually switch to false for production
+const __DEV__ = false; // manually switch to false for production
 
 let wavePoints = [];
 let initialPoints = 1;
@@ -9,6 +9,9 @@ let waveAmplitude = 100;
 let waveSpeed = 1.5;
 
 let bandHeight = 10;
+let baseBandHeight = 10;
+let extraBandHeight = 0;
+let maxBandHeight = height / 2;
 
 let trailsLayer;
 let overlay;
@@ -24,6 +27,12 @@ const palette = [
 if (__DEV__) {
   let simulateButton;
 }
+
+let performanceStartTime = 0;
+let performanceDuration = 60000; // 60 seconds
+
+const maxJitter = 12; // final maximum jitter
+
 let startButton;
 let performanceRunning = false;
 let messages = [];
@@ -73,7 +82,7 @@ function setup() {
         xPos = random(width);
         yPos = random(height);
         addRandomParticle();
-        bandHeight += 10;
+        bandHeight += 20;
       }
     });
   }
@@ -85,6 +94,7 @@ function setup() {
 
   startButton.mousePressed(() => {
     if (performanceRunning == false) {
+      performanceStartTime = millis();
       socket.emit('start-performance');
       performanceRunning = true;
       startButton.html("Stop");
@@ -106,8 +116,11 @@ function setup() {
       xPos = random(width);
       yPos = random(height);
 
+      extraBandHeight += 20; // or another step size
+      extraBandHeight = constrain(extraBandHeight, 0, maxBandHeight);
+
       addRandomParticle(data.color);
-      bandHeight += 10;
+
       //let p = random(wavePoints);
       //p.targetColor = color(random(palette));
       //p.lerpAmount = 0; // reset blend progression
@@ -128,6 +141,14 @@ function setup() {
 }
 
 function draw() {
+  let timeElapsed = millis() - performanceStartTime;
+  let entropyFactor = constrain(timeElapsed / performanceDuration, 0, 1);
+
+  baseBandHeight = lerp(10, maxBandHeight, entropyFactor);
+
+  // Final band height used for particles:
+  bandHeight = constrain(baseBandHeight + extraBandHeight, 0, maxBandHeight);
+
 
   noFill();
 
@@ -137,6 +158,10 @@ function draw() {
     // Update horizontal motion
     p.x -= p.speed;
 
+    let xJitter = entropyFactor * sin(frameCount * 0.01 + p.noiseSeed) * 5;
+    p.x += xJitter;
+
+
     if (p.x < 0) {
       p.x = width;
       p.yBase = height / 2 + random(-bandHeight / 2, bandHeight / 2);
@@ -144,9 +169,11 @@ function draw() {
 
     // Smooth vertical drift using Perlin noise
     let t = frameCount * 0.001 + p.noiseSeed; // includes time and unique offset
-    let floatOffset = map(noise(t), 0, 1, -waveAmplitude, waveAmplitude);
+    let dynamicWaveAmplitude = waveAmplitude + entropyFactor * 100;
+    let floatOffset = map(noise(t), 0, 1, -dynamicWaveAmplitude, dynamicWaveAmplitude);
 
-    let jitter = sin(frameCount * 0.02 + p.jitterPhase) * 3; // small wiggle
+    let jitterAmplitude = lerp(2, maxJitter, entropyFactor);
+    let jitter = sin(frameCount * 0.02 + p.jitterPhase) * jitterAmplitude; // wiggling
 
     p.y = p.yBase + floatOffset + jitter;
 
