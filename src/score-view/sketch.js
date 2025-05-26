@@ -4,7 +4,6 @@ const __DEV__ = false; // manually switch to false for production
 let wavePoints = [];
 let initialPoints = 1;
 
-let numPoints = 40;
 let waveAmplitude = 100;
 let waveSpeed = 1.5;
 
@@ -15,6 +14,8 @@ let maxBandHeight;
 
 let trailsLayer;
 let overlay;
+
+let timeElapsed;
 
 const palette = [
   [200, 100, 255],
@@ -101,7 +102,6 @@ function setup() {
 
   startButton.mousePressed(() => {
     userStartAudio();
-    //getAudioContext().resume();
 
     if (performanceRunning == false) {
       socket.emit('start-performance');
@@ -110,7 +110,7 @@ function setup() {
       getMessage(); // Start requesting words when performance starts
 
       if (performanceSound && !performanceSound.isPlaying()) {
-        performanceSound.amp(0.7);      
+        performanceSound.amp(0.7);
         performanceSound.play();
       }
 
@@ -119,13 +119,14 @@ function setup() {
     else if (performanceRunning == true) {
       socket.emit('stop-performance');
       performanceRunning = false;
+      resetPerformance();
       startButton.html("Start");
 
-  if (performanceSound && performanceSound.isPlaying()) {
-    performanceSound.amp(0);
-    performanceSound.stop();
-    } 
-  }
+      if (performanceSound && performanceSound.isPlaying()) {
+        performanceSound.amp(0);
+        performanceSound.stop();
+      }
+    }
   });
 
   socket.on('newMessage', (data) => {
@@ -142,9 +143,6 @@ function setup() {
 
       addRandomParticle(data.color);
 
-      //let p = random(wavePoints);
-      //p.targetColor = color(random(palette));
-      //p.lerpAmount = 0; // reset blend progression
     }
   });
 
@@ -162,25 +160,27 @@ function setup() {
 }
 
 function draw() {
-  let timeElapsed = millis() - performanceStartTime;
-  let entropyFactor = constrain(timeElapsed / performanceDuration, 0, 1);
+  let entropyFactor = 0;
+
+  if (performanceRunning) {
+    let timeElapsed = millis() - performanceStartTime;
+    entropyFactor = constrain(timeElapsed / performanceDuration, 0, 1);
+  }
 
   baseBandHeight = lerp(10, maxBandHeight, entropyFactor);
 
   // Final band height used for particles:
   bandHeight = constrain(baseBandHeight + extraBandHeight, 0, maxBandHeight);
 
-
   noFill();
-
 
   // Update point positions
   for (let p of wavePoints) {
     // Update horizontal motion
     p.x -= p.speed;
 
-    let xJitter = entropyFactor * sin(frameCount * 0.01 + p.noiseSeed) * 5;
-    p.x += xJitter;
+    //let xJitter = entropyFactor * sin(frameCount * 0.01 + p.noiseSeed) * 5;
+    //p.x += xJitter;
 
 
     if (p.x < 0) {
@@ -190,7 +190,7 @@ function draw() {
 
     // Smooth vertical drift using Perlin noise
     let t = frameCount * 0.001 + p.noiseSeed; // includes time and unique offset
-    let dynamicWaveAmplitude = waveAmplitude + entropyFactor * 100;
+    let dynamicWaveAmplitude = waveAmplitude + entropyFactor * 600;
     let floatOffset = map(noise(t), 0, 1, -dynamicWaveAmplitude, dynamicWaveAmplitude);
 
     let jitterAmplitude = lerp(2, maxJitter, entropyFactor);
@@ -221,6 +221,31 @@ function draw() {
 
 
 } // end draw
+
+function resetPerformance() {
+
+  extraBandHeight = 0;
+  bandHeight = 10;
+  baseBandHeight = 10;
+  performanceStartTime = 0;
+
+  trailsLayer.clear();       // clear the particle trails
+  trailsLayer.background(255); // reset to white background
+
+  overlay.clear();           // clear fading text overlay
+
+  currentMessage = '';
+  fadeIn = false;
+  fadeOut = false;
+  displaying = false;
+
+  wavePoints = [];
+  for (let i = 0; i < initialPoints; i++) {
+    addRandomParticle();
+  }
+
+
+}
 
 function updateOverlay() {
   overlay.background(255, backgroundOpacity);

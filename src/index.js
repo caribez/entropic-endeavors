@@ -39,7 +39,7 @@ const clientMessages = [
 function resetPerformance() {
   messages.length = 0;
   messages.push({ 'text': "Entropic", 'color': '#dbdbdb' });
-  messages.push({ 'text': "Endseavors", 'color': '#dbdbdb' });
+  messages.push({ 'text': "Endeavors", 'color': '#dbdbdb' });
 }
 
 const mutex = new Mutex(); // Create a mutex object
