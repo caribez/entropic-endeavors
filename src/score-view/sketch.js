@@ -93,13 +93,11 @@ const palette = [
 
 
 
-background(255); // Dark background for contrast
+background(255); 
 
     }
 
     function draw() {
-
-//background(1, 1); // Dark background for contrast
 
 noFill();
 
@@ -136,7 +134,7 @@ strokeWeight(p.size);
 
   // Draw and update overlay
   updateOverlay();
-  blendMode(MULTIPLY);
+  blendMode(OVERLAY);
 
   // Draw the overlay on top of main canvas
   //image(overlay, 0, 0);      
