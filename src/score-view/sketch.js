@@ -93,7 +93,7 @@ const palette = [
 
 
 
-background(0); // Dark background for contrast
+background(255); // Dark background for contrast
 
     }
 
@@ -147,7 +147,7 @@ blendMode(BLEND);
     } // end draw
 
     function updateOverlay() {
-      overlay.background(250, backgroundOpacity);
+      overlay.background(255, backgroundOpacity);
       //fill(0);
       overlay.textSize(48);
   if (fadeIn) {
