@@ -1,4 +1,23 @@
-  // Your p5.js code goes here
+  
+  let wavePoints = [];
+ let initialPoints = 40;
+ 
+let numPoints = 40;
+let waveAmplitude = 100;
+let waveSpeed = 1.5;
+  
+  let bandHeight = 10;
+
+let overlay;
+
+const palette = [
+  [200, 100, 255],
+  [100, 200, 255],
+  [255, 150, 100],
+  [150, 255, 150],
+  [255, 255, 100],
+];
+
     let startButton;
     let performanceRunning = false;
     let messages = [];
@@ -20,6 +39,13 @@
 
     function setup() {
       createCanvas(windowWidth, windowHeight);
+  overlay = createGraphics(windowWidth, windowHeight);
+  overlay.clear(); // Start transparent
+
+  for (let i = 0; i < initialPoints; i++) {
+    addRandomParticle();
+  }
+
       xPos = random(width);
       yPos = random(height);
 
@@ -49,6 +75,11 @@
           fadeInStart = millis(); // Record the start time for the fade in effect
           xPos = random(width);
           yPos = random(height);
+
+          addRandomParticle();
+          //let p = random(wavePoints);
+          //p.targetColor = color(random(palette));
+          //p.lerpAmount = 0; // reset blend progression
         }
       });
 
@@ -58,19 +89,71 @@
         }
         getMessage(); // No fade going on, so just fetch the new message.
       });
+
+
+
+background(0); // Dark background for contrast
+
     }
 
     function draw() {
-      background(250, backgroundOpacity);
-      //fill(0);
-      textSize(48);
 
+//background(1, 1); // Dark background for contrast
+
+noFill();
+
+
+// Update point positions
+for (let p of wavePoints) {
+  // Update horizontal motion
+  p.x -= p.speed;
+
+  if (p.x < 0) {
+    p.x = width;
+    p.yBase = height / 2 + random(-bandHeight / 2, bandHeight / 2);
+  }
+
+  // Smooth vertical drift using Perlin noise
+  let t = frameCount * 0.001 + p.noiseSeed; // includes time and unique offset
+  let floatOffset = map(noise(t), 0, 1, -waveAmplitude, waveAmplitude);
+
+  let jitter = sin(frameCount * 0.02 + p.jitterPhase) * 3; // small wiggle
+
+  p.y = p.yBase + floatOffset + jitter;
+
+  if (p.lerpAmount < 1) {
+    p.currentColor = lerpColor(p.currentColor, p.targetColor, 0.02);
+    p.lerpAmount += 0.02;
+  }
+
+  stroke(p.currentColor);
+strokeWeight(p.size);
+  point(p.x, p.y);
+}
+
+
+
+  // Draw and update overlay
+  updateOverlay();
+  blendMode(MULTIPLY);
+
+  // Draw the overlay on top of main canvas
+  //image(overlay, 0, 0);      
+blendMode(BLEND);
+
+
+
+    } // end draw
+
+    function updateOverlay() {
+      overlay.background(250, backgroundOpacity);
+      //fill(0);
+      overlay.textSize(48);
   if (fadeIn) {
     let fadeInElapsedTime = millis() - fadeInStart;
     let fadeInAlpha = map(fadeInElapsedTime, 0, fadeDuration, 0, 255);
-    //fill(0, fadeInAlpha);
-    fill (0, textOpacity);
-    text(currentMessage, xPos, yPos);
+    overlay.fill (0, textOpacity);
+    overlay.text(currentMessage, xPos, yPos);
     
     if (fadeInElapsedTime > fadeDuration) {
       fadeIn = false;
@@ -78,31 +161,50 @@
       displayStart = millis();
     }
   } else if (displaying) {
-    //fill(0);
-    //text(currentMessage, xPos, yPos);
-
     let displayElapsedTime = millis() - displayStart;
     if (displayElapsedTime > displayDuration) {
       displaying = false;
-      //fadeOut = true;
-      //fadeOutStart = millis();
-    //}
-  //} else if (fadeOut) {
-    //let fadeOutElapsedTime = millis() - fadeOutStart;
-    //let fadeOutAlpha = map(fadeOutElapsedTime, 0, fadeDuration, 255, 0);
-    //fill(0, fadeOutAlpha);
-    //text(currentMessage, xPos, yPos);
 
-    //if (fadeOutElapsedTime > fadeDuration) {
-      //fadeOut = false;
       if (performanceRunning) {
         getMessage(); // Fetch a new message after fade out
       }
     }
   }
-
     }
 
     function getMessage() {
       socket.emit('getMessage'); // Emit a 'getMessage' event to request a new message from the server
     }
+
+    function addRandomParticle() {
+  //let x = random(width);
+  let x = random(width, width + (width / 2) ); // Start offscreen to the right
+  let centerY = height / 2;
+  let yBase = centerY + random(-bandHeight / 2, bandHeight / 2);
+  let y = yBase;
+  let noiseSeed = random(1000);
+  let col = color(random(palette));
+let size = random(4, 10);                 // Bigger number = visually larger
+let speed = map(size, 10, 4, 1, 2.5);       // Bigger size → slower speed
+let jitterPhase = random(TWO_PI);
+
+
+  wavePoints.push({ 
+    x, 
+    y, 
+    yBase, 
+    noiseSeed, 
+    currentColor: col,
+    targetColor: col,
+    lerpAmount: 1,
+    speed, 
+    size,
+    jitterPhase
+  });
+  
+    if (wavePoints.length > 200) {
+    wavePoints.shift(); // Remove oldest
+  }
+
+    }
+
