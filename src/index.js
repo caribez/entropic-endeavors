@@ -37,6 +37,10 @@ const clientMessages = [
 ];
 
 function resetPerformance() {
+  resetMessages();
+}
+
+function resetMessages() {
   messages.length = 0;
   messages.push({ 'text': "Entropic", 'color': '#dbdbdb' });
   messages.push({ 'text': "Endeavors", 'color': '#dbdbdb' });
@@ -65,6 +69,12 @@ io.on('connection', (socket) => {
     // Reset
     resetPerformance();
   });
+  
+    socket.on('stop-performance', async () => {
+    console.log('stop-performance');
+    // Reset
+    resetPerformance();
+  });
 
   socket.on('textInput', async (message) => {
     const release = await mutex.acquire(); // Acquire the lock
@@ -85,7 +95,6 @@ io.on('connection', (socket) => {
     let buttonColor = parseRGBString(button.color);
 
     messages.push({ 'text': button.label, 'color': buttonColor });
-    clientMessages.push({ 'text': button.label });
 
 
     io.emit('messageReceived');
