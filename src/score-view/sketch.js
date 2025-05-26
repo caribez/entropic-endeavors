@@ -11,7 +11,7 @@ let waveSpeed = 1.5;
 let bandHeight = 10;
 let baseBandHeight = 10;
 let extraBandHeight = 0;
-let maxBandHeight = height / 2;
+let maxBandHeight;
 
 let trailsLayer;
 let overlay;
@@ -51,6 +51,11 @@ let xPos, yPos;
 
 const socket = io(); // Establish Socket.io connection
 
+let performanceSound;
+
+function preload() {
+  performanceSound = loadSound('assets/entropic-background.mp3'); // or .wav, .ogg
+}
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -63,6 +68,8 @@ function setup() {
   for (let i = 0; i < initialPoints; i++) {
     addRandomParticle();
   }
+
+  maxBandHeight = height / 2;
 
   xPos = random(width);
   yPos = random(height);
@@ -94,17 +101,32 @@ function setup() {
 
   startButton.mousePressed(() => {
     if (performanceRunning == false) {
-      performanceStartTime = millis();
       socket.emit('start-performance');
       performanceRunning = true;
       startButton.html("Stop");
       getMessage(); // Start requesting words when performance starts
+
+      if (performanceSound && !performanceSound.isPlaying()) {
+        performanceSound.setVolume(0);      
+        performanceSound.play();
+        performanceSound.amp(0.7, 2);        
+      }
+
+      performanceStartTime = millis();
     }
     else if (performanceRunning == true) {
       socket.emit('stop-performance');
       performanceRunning = false;
       startButton.html("Start");
-    }
+
+  if (performanceSound && performanceSound.isPlaying()) {
+    performanceSound.amp(0, 2); // fade to 0 over 2 seconds
+    setTimeout(() => {
+      performanceSound.stop(); // stop after fade completes
+      performanceSound.amp(0); // make sure it's 0
+    }, 2000);
+    } 
+  }
   });
 
   socket.on('newMessage', (data) => {
