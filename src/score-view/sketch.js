@@ -107,7 +107,7 @@ simulateButton.mousePressed(() => {
           xPos = random(width);
           yPos = random(height);
 
-          addRandomParticle();
+          addRandomParticle(data.color);
           bandHeight += 10;
           //let p = random(wavePoints);
           //p.targetColor = color(random(palette));
@@ -217,14 +217,15 @@ blendMode(BLEND);          // reset
       socket.emit('getMessage'); // Request a new message from the server
     }
 
-    function addRandomParticle() {
+    function addRandomParticle(particleColor) {
   //let x = random(width);
   let x = random(width, width + (width / 2) ); // Start offscreen to the right
   let centerY = height / 2;
   let yBase = centerY + random(-bandHeight / 2, bandHeight / 2);
   let y = yBase;
   let noiseSeed = random(1000);
-  let col = color(random(palette));
+  
+  let col = particleColor ? particleColor : color(random(palette));
 let size = random(4, 10);                 // Bigger number = visually larger
 let speed = map(size, 10, 4, 1, 2.5);       // Bigger size → slower speed
 let jitterPhase = random(TWO_PI);

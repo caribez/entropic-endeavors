@@ -76,10 +76,11 @@ io.on('connection', (socket) => {
   socket.on('buttonPress', async (button) => {
     const release = await mutex.acquire(); // Acquire the lock
 
-    messages.push({ 'text': button.label, 'color': button.color });
-    clientMessages.push({ 'text': button.label, 'color': button.color });
+    let buttonColor = parseRGBString(button.color);
 
-    const col = palette[Math.floor(Math.random() * palette.length)];
+    messages.push({ 'text': button.label, 'color': buttonColor });
+    clientMessages.push({ 'text': button.label, 'color': buttonColor });
+
 
     io.emit('messageReceived');
 
@@ -89,6 +90,8 @@ io.on('connection', (socket) => {
     // Get label from a list of all possible words.
     const randomIndex = Math.floor(Math.random() * clientMessages.length);
     const randomMessage = clientMessages[randomIndex].text;
+    const col = palette[Math.floor(Math.random() * palette.length)];
+
     socket.emit('newLabel', { id: button.id, label: randomMessage, color: col });
 
     release(); // Release the lock
@@ -109,6 +112,13 @@ io.on('connection', (socket) => {
   console.log('sending ${randomMessage}')
 
   io.emit('newMessage', { text: randomMessage.text , color: randomMessage.color }); // Emit 'newMessage' event to the client with the message
+}
+
+function parseRGBString(rgbString) {
+  // Expects format like "rgb(200, 100, 255)"
+  const match = rgbString.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+  if (!match) return null;
+  return [parseInt(match[1]), parseInt(match[2]), parseInt(match[3])];
 }
 
 app.get('/', (req, res) => {
