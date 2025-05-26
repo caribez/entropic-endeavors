@@ -100,6 +100,9 @@ function setup() {
   startButton.size(100, 50);
 
   startButton.mousePressed(() => {
+    userStartAudio();
+    //getAudioContext().resume();
+
     if (performanceRunning == false) {
       socket.emit('start-performance');
       performanceRunning = true;
@@ -107,9 +110,8 @@ function setup() {
       getMessage(); // Start requesting words when performance starts
 
       if (performanceSound && !performanceSound.isPlaying()) {
-        performanceSound.setVolume(0);      
+        performanceSound.amp(0.7);      
         performanceSound.play();
-        performanceSound.amp(0.7, 2);        
       }
 
       performanceStartTime = millis();
@@ -120,11 +122,8 @@ function setup() {
       startButton.html("Start");
 
   if (performanceSound && performanceSound.isPlaying()) {
-    performanceSound.amp(0, 2); // fade to 0 over 2 seconds
-    setTimeout(() => {
-      performanceSound.stop(); // stop after fade completes
-      performanceSound.amp(0); // make sure it's 0
-    }, 2000);
+    performanceSound.amp(0);
+    performanceSound.stop();
     } 
   }
   });
