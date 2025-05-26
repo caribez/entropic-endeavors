@@ -25,8 +25,8 @@ app.use('/', express.static(path.join(__dirname, 'public')));
 app.use('/score', express.static(path.join(__dirname, 'score-view')));
 
 const messages = [
-  { 'text': "Entropic", 'color': '#dbdbdb'},
-  { 'text': "Endeavors", 'color':'#dbdbdb' },
+  { 'text': "Entropic", 'color': '#dbdbdb' },
+  { 'text': "Endeavors", 'color': '#dbdbdb' },
 ];
 
 const clientMessages = [
@@ -38,16 +38,16 @@ const clientMessages = [
 
 function resetPerformance() {
   messages.length = 0;
-  messages.push( { 'text': "Entropic", 'color': '#dbdbdb'} );
-  messages.push( { 'text': "Endseavors", 'color':'#dbdbdb' } );
+  messages.push({ 'text': "Entropic", 'color': '#dbdbdb' });
+  messages.push({ 'text': "Endseavors", 'color': '#dbdbdb' });
 }
 
 const mutex = new Mutex(); // Create a mutex object
 
 io.on('connection', (socket) => {
   console.log('A user connected');
-  
-    // Listen for 'getMessage' event from the client
+
+  // Listen for 'getMessage' event from the client
   socket.on('getMessage', async () => {
     const release = await mutex.acquire(); // Acquire the lock
     sendMessageToClient();
@@ -62,13 +62,13 @@ io.on('connection', (socket) => {
 
   socket.on('textInput', async (message) => {
     const release = await mutex.acquire(); // Acquire the lock
-    
-    clientMessages.push({ 'text': message.text}); //Push to list for updating client buttons
+
+    clientMessages.push({ 'text': message.text }); //Push to list for updating client buttons
 
     // Also push it out to the screen
     //messages.push({ 'text': message.text}); 
     //sendMessageToClient();
-    
+
     release(); // Release the lock
 
   });
@@ -100,18 +100,18 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log('A user disconnected');
   });
-  
+
 });
 
-  function sendMessageToClient() {
-    
-    if (messages.length < 1) return;
+function sendMessageToClient() {
+
+  if (messages.length < 1) return;
   const randomIndex = Math.floor(Math.random() * messages.length);
   const randomMessage = messages.splice(randomIndex, 1)[0];
-  
+
   console.log('sending ${randomMessage}')
 
-  io.emit('newMessage', { text: randomMessage.text , color: randomMessage.color }); // Emit 'newMessage' event to the client with the message
+  io.emit('newMessage', { text: randomMessage.text, color: randomMessage.color }); // Emit 'newMessage' event to the client with the message
 }
 
 function parseRGBString(rgbString) {
@@ -137,7 +137,7 @@ app.get('/messages', (req, res) => {
 });
 
 // Set the port for the server to listen on
-const PORT =  process.env.PORT || 3000; // use environment port, or default to 3000
+const PORT = process.env.PORT || 3000; // use environment port, or default to 3000
 
 server.listen(PORT, () => {
   console.log('Server is running on port 3000');
