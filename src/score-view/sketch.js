@@ -1,6 +1,6 @@
   
   let wavePoints = [];
- let initialPoints = 40;
+ let initialPoints = 1;
  
 let numPoints = 40;
 let waveAmplitude = 100;
