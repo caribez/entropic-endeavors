@@ -9,6 +9,14 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
 
+const palette = [
+  [200, 100, 255],
+  [100, 200, 255],
+  [255, 150, 100],
+  [150, 255, 150],
+  [255, 255, 100],
+];
+
 
 app.use(bodyParser.json());
 
@@ -17,9 +25,8 @@ app.use('/', express.static(path.join(__dirname, 'public')));
 app.use('/score', express.static(path.join(__dirname, 'score-view')));
 
 const messages = [
-  { 'text': "Entropic" },
-  { 'text': "Endeavors" },
-  /* ... */
+  { 'text': "Entropic", 'color': '#dbdbdb'},
+  { 'text': "Endeavors", 'color':'#dbdbdb' },
 ];
 
 const clientMessages = [
@@ -31,8 +38,8 @@ const clientMessages = [
 
 function resetPerformance() {
   messages.length = 0;
-  messages.push({ 'text': "Entropic" });
-  messages.push({ 'text': "Endeavors" });
+  messages.push( { 'text': "Entropic", 'color': '#dbdbdb'} );
+  messages.push( { 'text': "Endseavors", 'color':'#dbdbdb' } );
 }
 
 const mutex = new Mutex(); // Create a mutex object
@@ -68,8 +75,12 @@ io.on('connection', (socket) => {
 
   socket.on('buttonPress', async (button) => {
     const release = await mutex.acquire(); // Acquire the lock
-    messages.push({ 'text': button.label });
-    clientMessages.push({ 'text': button.label});
+
+    messages.push({ 'text': button.label, 'color': button.color });
+    clientMessages.push({ 'text': button.label, 'color': button.color });
+
+    const col = palette[Math.floor(Math.random() * palette.length)];
+
     io.emit('messageReceived');
 
     // Sends a new label back to the client
@@ -78,7 +89,7 @@ io.on('connection', (socket) => {
     // Get label from a list of all possible words.
     const randomIndex = Math.floor(Math.random() * clientMessages.length);
     const randomMessage = clientMessages[randomIndex].text;
-    socket.emit('newLabel', { id: button.id, label: randomMessage });
+    socket.emit('newLabel', { id: button.id, label: randomMessage, color: col });
 
     release(); // Release the lock
   });
@@ -97,7 +108,7 @@ io.on('connection', (socket) => {
   
   console.log('sending ${randomMessage}')
 
-  io.emit('newMessage', { text: randomMessage.text }); // Emit 'newMessage' event to the client with the message
+  io.emit('newMessage', { text: randomMessage.text , color: randomMessage.color }); // Emit 'newMessage' event to the client with the message
 }
 
 app.get('/', (req, res) => {

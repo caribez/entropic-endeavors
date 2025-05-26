@@ -16,7 +16,13 @@ function setup() {
     let buttonID = data.id;
     let label = data.label;
     const index = directions.findIndex(dir => dir.id === buttonID);
+
+    let rgb = data.color;
+    let cssColor = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+
     buttons[index].html(label);  // Update visible text on button
+    buttons[index].style('background-color', cssColor);
+    directions[index].color = cssColor;
     directions[index].label = label;
   });  
 }

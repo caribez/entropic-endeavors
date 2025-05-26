@@ -214,7 +214,7 @@ blendMode(BLEND);          // reset
 
 
     function getMessage() {
-      socket.emit('getMessage'); // Emit a 'getMessage' event to request a new message from the server
+      socket.emit('getMessage'); // Request a new message from the server
     }
 
     function addRandomParticle() {
