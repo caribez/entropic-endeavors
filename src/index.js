@@ -42,10 +42,10 @@ function resetPerformance() {
   messages.push({ 'text': "Endeavors", 'color': '#dbdbdb' });
   
   clientMessages = 0;
-  clientMessages.push( { 'text': "Warmth", 'color': '#3ab433' });
-  clientMessages.push( { 'text': "Swift Wind", 'color': '#39b41a' });
-  clientMessages.push( { 'text': "Whispers", 'color': '#9a13d1' });
-  clientMessages.push( { 'text': "Loud Storm", 'color': '#8c3a13' });
+  clientMessages.push( { 'text': "Warmth"});
+  clientMessages.push( { 'text': "Swift Wind" });
+  clientMessages.push( { 'text': "Whispers" });
+  clientMessages.push( { 'text': "Loud Storm" });
 }
 
 const mutex = new Mutex(); // Create a mutex object
@@ -69,7 +69,7 @@ io.on('connection', (socket) => {
   socket.on('textInput', async (message) => {
     const release = await mutex.acquire(); // Acquire the lock
 
-    clientMessages.push({ 'text': message.text, 'color': message.color }); //Push to list for updating client buttons
+    clientMessages.push({ 'text': message.text }); //Push to list for updating client buttons
 
     // Also send it out to the screen
     messages.push({ 'text': message.text, 'color': message.color }); 
@@ -85,7 +85,7 @@ io.on('connection', (socket) => {
     let buttonColor = parseRGBString(button.color);
 
     messages.push({ 'text': button.label, 'color': buttonColor });
-    clientMessages.push({ 'text': button.label, 'color': buttonColor });
+    clientMessages.push({ 'text': button.label });
 
 
     io.emit('messageReceived');
