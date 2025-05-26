@@ -1,5 +1,5 @@
 
-const __DEV__ = false; // manually switch to false for production
+const __DEV__ = true; // manually switch to false for production
 
 let wavePoints = [];
 let initialPoints = 1;
@@ -25,6 +25,13 @@ const palette = [
   [255, 255, 100],
 ];
 
+const textFonts = [
+  'Courier New',
+  'Verdana',
+  'Georgia',
+  'Times New Roman',
+];
+
 if (__DEV__) {
   let simulateButton;
 }
@@ -48,7 +55,7 @@ let displayStart = 0;
 let fadeIn = false;
 let fadeOut = false;
 let displaying = false;
-let xPos, yPos;
+let textPosX, textPosY;
 
 const socket = io(); // Establish Socket.io connection
 
@@ -72,8 +79,8 @@ function setup() {
 
   maxBandHeight = height / 2;
 
-  xPos = random(width);
-  yPos = random(height);
+  textPosX = random(width);
+  textPosY = random(height);
 
   if (__DEV__) {
     simulateButton = createButton('Simulate Message');
@@ -85,10 +92,13 @@ function setup() {
       if (!performanceRunning) return;
       if (fakeMessage.text.length > 0) {
         currentMessage = fakeMessage.text;
+
+        overlay.textFont(random(textFonts));
+        [textPosX, textPosY] = setSafeRandomTextPosition(currentMessage);
+
         fadeIn = true;
         fadeInStart = millis();
-        xPos = random(width);
-        yPos = random(height);
+
         addRandomParticle();
         bandHeight += 20;
       }
@@ -133,10 +143,12 @@ function setup() {
     if (!performanceRunning) return; // ignore messages if not performing        
     if (data.text.length > 0) {
       currentMessage = data.text;
+
+      overlay.textFont(random(textFonts));
+      [textPosX, textPosY] = setSafeRandomTextPosition(currentMessage);
+
       fadeIn = true;
       fadeInStart = millis(); // Record the start time for the fade in effect
-      xPos = random(width);
-      yPos = random(height);
 
       extraBandHeight += 20; // or another step size
       extraBandHeight = constrain(extraBandHeight, 0, maxBandHeight);
@@ -222,6 +234,24 @@ function draw() {
 
 } // end draw
 
+function setSafeRandomTextPosition(message, textSize = 48, margin = 10) {
+  overlay.textSize(textSize);
+  let w = overlay.textWidth(message);
+  let h = overlay.textAscent() + overlay.textDescent();
+
+  let x = random(width);
+  let y = random(height);
+
+  if (x + w > width - margin) x = width - w - margin;
+  if (x < margin) x = margin;
+
+  if (y + h > height - margin) y = height - h - margin;
+  if (y < h + margin) y = h + margin;
+
+  return [x, y];
+}
+
+
 function resetPerformance() {
 
   extraBandHeight = 0;
@@ -251,11 +281,12 @@ function updateOverlay() {
   overlay.background(255, backgroundOpacity);
   //fill(0);
   overlay.textSize(48);
+
   if (fadeIn) {
     let fadeInElapsedTime = millis() - fadeInStart;
     let fadeInAlpha = map(fadeInElapsedTime, 0, fadeDuration, 0, 255);
     overlay.fill(0, textOpacity);
-    overlay.text(currentMessage, xPos, yPos);
+    overlay.text(currentMessage, textPosX, textPosY);
 
     if (fadeInElapsedTime > fadeDuration) {
       fadeIn = false;
