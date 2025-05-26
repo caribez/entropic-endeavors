@@ -32,25 +32,25 @@
           socket.emit('start-performance');
           performanceRunning = true;
           startButton.html("Stop");
+          getMessage(); // Start requesting words when performance starts
         }
         else if (performanceRunning == true) {
           socket.emit('stop-performance');
           performanceRunning = false;
           startButton.html("Start");
         }
-      //startButton.remove();
     });
       
-      getMessage();
       socket.on('newMessage', (data) => {
-              if (data.text.length > 0) {
-                currentMessage = data.text;
-                fadeIn = true;
-                fadeInStart = millis(); // Record the start time for the fade in effect
-                xPos = random(width);
-                yPos = random(height);
-              }
-            });
+        if (!performanceRunning) return; // ignore messages if not performing        
+        if (data.text.length > 0) {
+          currentMessage = data.text;
+          fadeIn = true;
+          fadeInStart = millis(); // Record the start time for the fade in effect
+          xPos = random(width);
+          yPos = random(height);
+        }
+      });
 
       socket.on('messageReceived', () => {
         if (fadeOut || fadeIn || displaying) {
