@@ -45,7 +45,7 @@ function resetMessages() {
   messages.push({ 'text': "Entropic", 'color': '#dbdbdb' });
   messages.push({ 'text': "Endeavors", 'color': '#dbdbdb' });
   
-  clientMessages = 0;
+  clientMessages.length = 0;
   clientMessages.push( { 'text': "Warmth"});
   clientMessages.push( { 'text': "Swift Wind" });
   clientMessages.push( { 'text': "Whispers" });
