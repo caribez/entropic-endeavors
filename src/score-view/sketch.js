@@ -137,7 +137,7 @@ strokeWeight(p.size);
   blendMode(MULTIPLY);
 
   // Draw the overlay on top of main canvas
-  //image(overlay, 0, 0);      
+  image(overlay, 0, 0);      
 blendMode(BLEND);
 
 
