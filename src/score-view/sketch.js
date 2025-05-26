@@ -77,6 +77,7 @@ const palette = [
           yPos = random(height);
 
           addRandomParticle();
+          bandHeight += 5;
           //let p = random(wavePoints);
           //p.targetColor = color(random(palette));
           //p.lerpAmount = 0; // reset blend progression
