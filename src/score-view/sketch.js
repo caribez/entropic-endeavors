@@ -1,6 +1,8 @@
   
-  let wavePoints = [];
- let initialPoints = 1;
+ const __DEV__ = false; // manually switch to false for production
+ 
+ let wavePoints = [];
+  let initialPoints = 1;
  
 let numPoints = 40;
 let waveAmplitude = 100;
@@ -8,6 +10,7 @@ let waveSpeed = 1.5;
   
   let bandHeight = 10;
 
+  let trailsLayer;
 let overlay;
 
 const palette = [
@@ -18,13 +21,16 @@ const palette = [
   [255, 255, 100],
 ];
 
+if (__DEV__){
+  let simulateButton;
+}
     let startButton;
     let performanceRunning = false;
     let messages = [];
     let currentMessage = '';
     let fadeDuration = 2000; // Duration of fade effect in milliseconds
     let displayDuration = 1000; // Duration to display the message in milliseconds : SET SHORT FOR TESTING PURPOSES
-    let backgroundOpacity = 2;
+    let backgroundOpacity = 2.1;
     let textOpacity = 5;
     let fadeInStart = 0;
     let fadeOutStart = 0;
@@ -39,6 +45,9 @@ const palette = [
 
     function setup() {
       createCanvas(windowWidth, windowHeight);
+        trailsLayer = createGraphics(windowWidth, windowHeight);
+  trailsLayer.background(255); // initial white background
+
   overlay = createGraphics(windowWidth, windowHeight);
   overlay.clear(); // Start transparent
 
@@ -48,6 +57,28 @@ const palette = [
 
       xPos = random(width);
       yPos = random(height);
+
+      if (__DEV__) {
+      simulateButton = createButton('Simulate Message');
+simulateButton.position(height / 20, width / 20 + 60); // Position it below the Start/Stop button
+simulateButton.size(150, 50);
+simulateButton.mousePressed(() => {
+  const fakeMessage = { text: 'Simulacra' };
+  // Directly call the same logic as the socket listener
+  if (!performanceRunning) return;
+  if (fakeMessage.text.length > 0) {
+    currentMessage = fakeMessage.text;
+    fadeIn = true;
+    fadeInStart = millis();
+    xPos = random(width);
+    yPos = random(height);
+    addRandomParticle();
+    bandHeight += 10;
+  }
+});
+}
+
+
 
       startButton = createButton('Start');
       startButton.position(height / 20, width / 20);
@@ -125,20 +156,29 @@ for (let p of wavePoints) {
     p.lerpAmount += 0.02;
   }
 
-  stroke(p.currentColor);
-strokeWeight(p.size);
-  point(p.x, p.y);
+  //stroke(p.currentColor);
+//strokeWeight(p.size);
+//  point(p.x, p.y);
+  trailsLayer.stroke(p.currentColor);
+  trailsLayer.strokeWeight(p.size);
+  trailsLayer.point(p.x, p.y);
+
 }
 
 
 
   // Draw and update overlay
   updateOverlay();
-  blendMode(MULTIPLY);
+
+  image(trailsLayer, 0, 0);  // draw the persistent particle trails
+blendMode(MULTIPLY);       // hide white overlay background, preserve black text
+image(overlay, 0, 0);      // draw fading text
+blendMode(BLEND);          // reset
+
 
   // Draw the overlay on top of main canvas
-  image(overlay, 0, 0);      
-blendMode(BLEND);
+  //image(overlay, 0, 0);      
+//blendMode(BLEND);
 
 
 
@@ -170,6 +210,8 @@ blendMode(BLEND);
     }
   }
     }
+
+
 
     function getMessage() {
       socket.emit('getMessage'); // Emit a 'getMessage' event to request a new message from the server
