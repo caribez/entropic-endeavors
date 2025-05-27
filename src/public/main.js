@@ -43,22 +43,18 @@ function createUI() {
   textInput = createInput();
   textInput.parent(container);
   textInput.id('text-input');
-  //textInput.position(width / 2 - 100, height - height / 3);
 
   sendTextButton = createButton('Send Text');
   sendTextButton.parent(container);
   sendTextButton.id('send-text-btn');
 
-  //sendTextButton.size(100, 40);
-  //sendTextButton.style('font-size', '1rem');
-  //sendTextButton.position(textInput.x + textInput.width + 10, textInput.y);
   sendTextButton.mousePressed(sendText);
 
   directions = [
-    { id: 'up', angle: 270, label: 'Loud Storm', color: '#db8943' },
-    { id: 'right', angle: 0, label: 'Swift Winds', color: '#3498db' },
-    { id: 'down', angle: 90, label: 'Whispers', color: '#bd8349' },
-    { id: 'left', angle: 180, label: 'Warmth', color: '#3498db' },
+    { id: 'up', angle: 270, label: 'Loud Storm', color: '#E67E7E' },
+    { id: 'right', angle: 0, label: 'Swift Winds', color: '#93E67E' },
+    { id: 'down', angle: 90, label: 'Whispers', color: '#7E93E6' },
+    { id: 'left', angle: 180, label: 'Warmth', color: '#E67E9D' },
   ];
 
   const radius = min(width, height) * 0.2;
