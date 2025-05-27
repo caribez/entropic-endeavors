@@ -1,22 +1,11 @@
 
 const __DEV__ = true; // manually switch to false for production
 
-
-// NEW CODE 
-
 let waves = [];
 let initialWaves = 1;
 let resolution = 200;
 let noiseScale = 0.02;
 let waveAmplitude = 200;
-
-// END OF NEW CODE
-
-// OLD???
-let bandHeight = 10;
-let baseBandHeight = 10;
-let extraBandHeight = 0;
-let maxBandHeight;
 
 let trailsLayer;
 let overlay;
@@ -79,18 +68,11 @@ function setup() {
   overlay = createGraphics(windowWidth, windowHeight);
   overlay.clear(); // Start transparent
 
-  /*
-  for (let i = 0; i < initialPoints; i++) {
-    addRandomParticle();
-  }
-    */
   waves = [];
 
   for (let i = 0; i < initialWaves; i++) {
     addWavyLine(random(palette));
   }
-
-  maxBandHeight = height / 2;
 
   textPosX = random(width);
   textPosY = random(height);
@@ -113,7 +95,6 @@ function setup() {
         fadeInStart = millis();
 
         addWavyLine(random(palette));
-        bandHeight += 20;
       }
     });
   }
@@ -163,9 +144,6 @@ function setup() {
       fadeIn = true;
       fadeInStart = millis(); // Record the start time for the fade in effect
 
-      extraBandHeight += 20; // or another step size
-      extraBandHeight = constrain(extraBandHeight, 0, maxBandHeight);
-
       //addRandomParticle(data.color);
       addWavyLine(data.color);
 
@@ -179,44 +157,43 @@ function setup() {
     getMessage(); // No fade going on, so just fetch the new message.
   });
 
-
   background(255);
-
 }
 
 function draw() {
   let entropyFactor = 0;
-
+  let entropyFactorCubic = 0;
   if (performanceRunning) {
     let timeElapsed = millis() - performanceStartTime;
     entropyFactor = constrain(timeElapsed / performanceDuration, 0, 1);
+    entropyFactorCubic = entropyFactor * entropyFactor;
   }
 
-  baseBandHeight = lerp(10, maxBandHeight, entropyFactor);
 
-  // Final band height used for particles:
-  bandHeight = constrain(baseBandHeight + extraBandHeight, 0, maxBandHeight);
+  waveAmplitude = lerp(50, 1000, entropyFactor); 
+  noiseScale = lerp(0.01, 0.05, entropyFactorCubic); // or more extreme if you want chaos
 
-  noFill();
   trailsLayer.noFill();
-  
+
   trailsLayer.background(230, 255, 216, 5);
 
-for (let i = waves.length - 1; i >= 0; i--) {
-  let wave = waves[i];
-  if (!wave.isAlive()) {
-    waves.splice(i, 1);
-    continue;
-  }
+  for (let i = waves.length - 1; i >= 0; i--) {
+    let wave = waves[i];
+    if (!wave.isAlive()) {
+      waves.splice(i, 1);
+      continue;
+    }
 
-  let age = millis() - wave.birthTime;
-  let alpha = map(age, 0, wave.lifetime, alphaFromColor(wave.col), 0);
-  trailsLayer.stroke(adjustAlpha(wave.col, alpha));
-  trailsLayer.strokeWeight(wave.weight);
-  trailsLayer.noFill();
-  wave.update();
-  wave.display(trailsLayer);
-}
+    let age = millis() - wave.birthTime;
+
+    let alpha = calculateAlpha(wave, age);
+
+    trailsLayer.stroke(adjustAlpha(wave.col, alpha));
+    trailsLayer.strokeWeight(wave.weight);
+    trailsLayer.noFill();
+    wave.update();
+    wave.display(trailsLayer);
+  }
 
   // Draw and update overlay
   updateOverlay();
@@ -227,6 +204,19 @@ for (let i = waves.length - 1; i >= 0; i--) {
   blendMode(BLEND);          // reset
 
 } // end draw
+
+function calculateAlpha(wave, age) {
+  let fadeInTime = wave.lifetime * 0.2; // first 20% of lifetime is fade-in
+  let fullAlpha = alphaFromColor(wave.col);
+  let alpha;
+
+  if (age < fadeInTime) {
+    alpha = map(age, 0, fadeInTime, 0, fullAlpha);
+  } else {
+    alpha = map(age, fadeInTime, wave.lifetime, fullAlpha, 0);
+  }
+  return alpha;
+}
 
 function setSafeRandomTextPosition(message, textSize = 48, margin = 10) {
   overlay.textSize(textSize);
@@ -245,12 +235,8 @@ function setSafeRandomTextPosition(message, textSize = 48, margin = 10) {
   return [x, y];
 }
 
-
 function resetPerformance() {
 
-  extraBandHeight = 0;
-  bandHeight = 10;
-  baseBandHeight = 10;
   performanceStartTime = 0;
 
   trailsLayer.clear();       // clear the particle trails
@@ -266,8 +252,6 @@ function resetPerformance() {
   for (let i = 0; i < initialWaves; i++) {
     addWavyLine();
   }
-
-
 }
 
 function updateOverlay() {
@@ -303,8 +287,8 @@ function getMessage() {
 }
 
 function addWavyLine(waveColor) {
-  let weight = random(4, 10);
-  let waveSpeed = map(weight, 2, 15, 0.01, 0.005);
+  let weight = random(4, 15);
+  let waveSpeed = map(weight, 4, 15, 0.01, 0.005);
   let offset = waves.length * 1000;
 
   // Use color from server or fallback
@@ -315,41 +299,3 @@ function addWavyLine(waveColor) {
     waves.shift(); // Limit total lines
   }
 }
-
-
-/*
-function addRandomParticle(particleColor) {
-  //let x = random(width);
-  let x = random(width, width + (width / 2)); // Start offscreen to the right
-  let centerY = height / 2;
-  let yBase = centerY + random(-bandHeight / 2, bandHeight / 2);
-  let y = yBase;
-  let noiseSeed = random(1000);
-
-  let col = particleColor ? particleColor : color(random(palette));
-  let size = random(4, 10);                 // Bigger number = visually larger
-  let speed = map(size, 10, 4, 1, 2.5);       // Bigger size → slower speed
-  let jitterPhase = random(TWO_PI);
-
-
-  wavePoints.push({
-    x,
-    y,
-    yBase,
-    noiseSeed,
-    currentColor: col,
-    targetColor: col,
-    lerpAmount: 1,
-    speed,
-    size,
-    jitterPhase
-  });
-
-  if (wavePoints.length > 200) {
-    wavePoints.shift(); // Remove oldest
-  }
-
-}
-
-*/
-

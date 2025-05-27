@@ -7,7 +7,7 @@ class WavyLine {
     this.yBase = random(height * 0.1, height * 0.9);
     this.noiseOffset = 0;
     this.birthTime = millis(); // Track when the wave was created
-    this.lifetime = 10000;     // 10 seconds
+    this.lifetime = random(8000, 12000);;     // 8-12 seconds
   }
 
   update() {
