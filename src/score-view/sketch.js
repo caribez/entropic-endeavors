@@ -28,16 +28,16 @@ const socket = io(); // Establish Socket.io connection
 let performanceSound;
 
 function preload() {
-  performanceSound = loadSound('assets/entropic-background.mp3'); // or .wav, .ogg
+  performanceSound = loadSound('assets/entropic-background.mp3');
 }
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   trailsLayer = createGraphics(windowWidth, windowHeight);
-  trailsLayer.background(255); // initial white background
+  trailsLayer.background(255); 
 
   overlay = createGraphics(windowWidth, windowHeight);
-  overlay.clear(); // Start transparent
+  overlay.clear(); 
 
 
   for (let i = 0; i < initialWaves; i++) {
@@ -49,11 +49,10 @@ function setup() {
 
   if (__DEV__) {
     simulateButton = createButton('Simulate Message');
-    simulateButton.position(height / 20, width / 20 + 60); // Position it below the Start/Stop button
+    simulateButton.position(height / 20, width / 20 + 60);
     simulateButton.size(150, 50);
     simulateButton.mousePressed(() => {
       const fakeMessage = { text: 'Simulacra' };
-      // Directly call the same logic as the socket listener
       if (!performanceRunning) return;
       if (fakeMessage.text.length > 0) {
         currentMessage = fakeMessage.text;
@@ -114,9 +113,7 @@ function setup() {
       fadeIn = true;
       fadeInStart = millis(); // Record the start time for the fade in effect
 
-      //addRandomParticle(data.color);
       addWave(data.color);
-
     }
   });
 
@@ -152,8 +149,6 @@ function draw() {
   let phaseG = TWO_PI / 3;      // Green starts 1/3 of a cycle ahead
   let phaseB = TWO_PI * 2 / 3;  // Blue starts 2/3 of a cycle ahead
 
-
-  //trailsLayer.background(230, 255, 216, 5);
   let r = map(sin(millis() * performanceSineRate * 5 + phaseR), -1, 1, 190, 255);
   let g = map(sin(millis() * performanceSineRate * 4 + phaseG), -1, 1, 210, 255);
   let b = map(sin(millis() * performanceSineRate * 2 + phaseB), -1, 1, 190, 255);

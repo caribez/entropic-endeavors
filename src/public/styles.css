@@ -28,7 +28,7 @@ body {
   max-width: 500px;
   padding: 8px 12px;
   font-size: 1rem;
-  height: 2.5rem; /* Clamp height */
+  height: 2.5rem;
   max-height: 3rem;
   box-sizing: border-box;
 }
@@ -36,7 +36,7 @@ body {
 #send-text-btn {
   padding: 0px 16px;
   font-size: 1rem;
-  height: 2.5rem; /* Match input field */
+  height: 2.5rem; 
   max-height: 3rem;
   white-space: nowrap;
   max-width: 150px;
@@ -56,21 +56,18 @@ body {
 }
 
 #send-text-btn {
-  width: auto; /* Let it size naturally */
+  width: auto; 
   font-size: 1rem;
-  align-self: center; /* Centers the button horizontally */
-  padding: 0 24px; /* Optional: wider button look */
+  align-self: center;
+  padding: 0 24px; 
 }
 }
 
-
-/* Adjust button styles */
 button {
   background-color: #3498db;
   color: rgb(0, 0, 0);
   border: none;
   cursor: pointer;
-  /* Remove margins to ensure accurate centering */
   transition: background-color 0.3s ease;
 }
 
