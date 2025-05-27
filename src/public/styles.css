@@ -4,75 +4,82 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 80vh;
-  width: 80vw;
-  background-color: #f2f2f2;
+  height: 90vh;
+  width: 90vw;
+  background-color: #c4acc5;
 }
 
-.circle {
-  width: 66vw; /* Responsive width for the circle */
-  height: 66vw; /* Responsive height for the circle */
-  border: 8px solid #3498db;
-  border-radius: 50%;
-  display: flex;
-  justify-content: space-around; /* Space out the button containers */
-  align-items: center;
-  flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
-  padding: 2.5vw; /* Adjust padding for responsiveness */
-}
-
-/* Styles for the status div */
-#status {
+/* === Default (desktop-first) styles === */
+#text-container {
   position: absolute;
-  width: 100vw; /* Make it stretch the full width of .circle */
-  text-align: center;
-  margin-top: 20vw; /* Adjust margin for space below the circle */
-  bottom: 10vw; /* Adjust this value to set the distance between circle and status */
-}
-
-
-
-.button-container:nth-child(1) { transform: translate(-50%, -50%) rotate(0deg) translate(35.5vw) rotate(-0deg); }
-.button-container:nth-child(2) { transform: translate(-50%, -50%) rotate(90deg) translate(35.5vw) rotate(-90deg); }
-.button-container:nth-child(3) { transform: translate(-50%, -50%) rotate(180deg) translate(35.5vw) rotate(-180deg); }
-.button-container:nth-child(4) { transform: translate(-50%, -50%) rotate(270deg) translate(35.5vw) rotate(-270deg); }
-
-/* ... Your existing styles ... */
-
-.button-container {
-  position: absolute;
-  top: 50%;
+  bottom: 5vh;
   left: 50%;
-  transform-origin: center center;
-  display: flex; /* Add display flex */
-  justify-content: center; /* Center horizontally */
-  align-items: center; /* Center vertically */
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  width: auto;
+  max-width: 90vw;
 }
+
+#text-input {
+  flex: 1;
+  min-width: 200px;
+  max-width: 500px;
+  padding: 8px 12px;
+  font-size: 1rem;
+  height: 2.5rem; /* Clamp height */
+  max-height: 3rem;
+  box-sizing: border-box;
+}
+
+#send-text-btn {
+  padding: 0px 16px;
+  font-size: 1rem;
+  height: 2.5rem; /* Match input field */
+  max-height: 3rem;
+  white-space: nowrap;
+  max-width: 150px;
+  border-radius: 15%;
+}
+
+/* === Mobile styles (screen width < 600px) === */
+@media screen and (max-width: 600px) {
+  #text-container {
+    flex-direction: column;
+    width: 90vw;
+  }
+
+  #text-input {
+  width: 100%;
+  font-size: 1rem;
+}
+
+#send-text-btn {
+  width: auto; /* Let it size naturally */
+  font-size: 1rem;
+  align-self: center; /* Centers the button horizontally */
+  padding: 0 24px; /* Optional: wider button look */
+}
+  /*
+  #text-input,
+  #send-text-btn {
+    width: 100%;
+    font-size: 1rem;
+  }
+  */
+}
+
 
 /* Adjust button styles */
 button {
-  width: 25vw;
-  height: 25vw;
-  border-radius: 50%;
   background-color: #3498db;
   color: white;
   border: none;
-  font-size: 4vw;
   cursor: pointer;
   /* Remove margins to ensure accurate centering */
   transition: background-color 0.3s ease;
 }
-
-#up-btn {
-   background-color: #db8943;
-}
-
-#down-btn {
-   background-color: #bd8349;
-}
-
-/* ... Rest of your styles ... */
-
 
 
 button:hover {

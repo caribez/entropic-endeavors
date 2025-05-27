@@ -1,12 +1,18 @@
 
 const __DEV__ = true; // manually switch to false for production
 
-let wavePoints = [];
-let initialPoints = 1;
 
-let waveAmplitude = 100;
-let waveSpeed = 1.5;
+// NEW CODE 
 
+let waves = [];
+let initialWaves = 1;
+let resolution = 200;
+let noiseScale = 0.02;
+let waveAmplitude = 200;
+
+// END OF NEW CODE
+
+// OLD???
 let bandHeight = 10;
 let baseBandHeight = 10;
 let extraBandHeight = 0;
@@ -73,8 +79,15 @@ function setup() {
   overlay = createGraphics(windowWidth, windowHeight);
   overlay.clear(); // Start transparent
 
+  /*
   for (let i = 0; i < initialPoints; i++) {
     addRandomParticle();
+  }
+    */
+  waves = [];
+
+  for (let i = 0; i < initialWaves; i++) {
+    addWavyLine(random(palette));
   }
 
   maxBandHeight = height / 2;
@@ -99,7 +112,7 @@ function setup() {
         fadeIn = true;
         fadeInStart = millis();
 
-        addRandomParticle();
+        addWavyLine(random(palette));
         bandHeight += 20;
       }
     });
@@ -153,7 +166,8 @@ function setup() {
       extraBandHeight += 20; // or another step size
       extraBandHeight = constrain(extraBandHeight, 0, maxBandHeight);
 
-      addRandomParticle(data.color);
+      //addRandomParticle(data.color);
+      addWavyLine(data.color);
 
     }
   });
@@ -164,7 +178,6 @@ function setup() {
     }
     getMessage(); // No fade going on, so just fetch the new message.
   });
-
 
 
   background(255);
@@ -185,43 +198,25 @@ function draw() {
   bandHeight = constrain(baseBandHeight + extraBandHeight, 0, maxBandHeight);
 
   noFill();
+  trailsLayer.noFill();
+  
+  trailsLayer.background(230, 255, 216, 5);
 
-  // Update point positions
-  for (let p of wavePoints) {
-    // Update horizontal motion
-    p.x -= p.speed;
-
-    //let xJitter = entropyFactor * sin(frameCount * 0.01 + p.noiseSeed) * 5;
-    //p.x += xJitter;
-
-
-    if (p.x < 0) {
-      p.x = width;
-      p.yBase = height / 2 + random(-bandHeight / 2, bandHeight / 2);
-    }
-
-    // Smooth vertical drift using Perlin noise
-    let t = frameCount * 0.001 + p.noiseSeed; // includes time and unique offset
-    let dynamicWaveAmplitude = waveAmplitude + entropyFactor * 600;
-    let floatOffset = map(noise(t), 0, 1, -dynamicWaveAmplitude, dynamicWaveAmplitude);
-
-    let jitterAmplitude = lerp(2, maxJitter, entropyFactor);
-    let jitter = sin(frameCount * 0.02 + p.jitterPhase) * jitterAmplitude; // wiggling
-
-    p.y = p.yBase + floatOffset + jitter;
-
-    if (p.lerpAmount < 1) {
-      p.currentColor = lerpColor(p.currentColor, p.targetColor, 0.02);
-      p.lerpAmount += 0.02;
-    }
-
-    trailsLayer.stroke(p.currentColor);
-    trailsLayer.strokeWeight(p.size);
-    trailsLayer.point(p.x, p.y);
-
+for (let i = waves.length - 1; i >= 0; i--) {
+  let wave = waves[i];
+  if (!wave.isAlive()) {
+    waves.splice(i, 1);
+    continue;
   }
 
-
+  let age = millis() - wave.birthTime;
+  let alpha = map(age, 0, wave.lifetime, alphaFromColor(wave.col), 0);
+  trailsLayer.stroke(adjustAlpha(wave.col, alpha));
+  trailsLayer.strokeWeight(wave.weight);
+  trailsLayer.noFill();
+  wave.update();
+  wave.display(trailsLayer);
+}
 
   // Draw and update overlay
   updateOverlay();
@@ -230,7 +225,6 @@ function draw() {
   blendMode(MULTIPLY);       // hide white overlay background, preserve black text
   image(overlay, 0, 0);      // draw fading text
   blendMode(BLEND);          // reset
-
 
 } // end draw
 
@@ -269,9 +263,8 @@ function resetPerformance() {
   fadeOut = false;
   displaying = false;
 
-  wavePoints = [];
-  for (let i = 0; i < initialPoints; i++) {
-    addRandomParticle();
+  for (let i = 0; i < initialWaves; i++) {
+    addWavyLine();
   }
 
 
@@ -309,6 +302,22 @@ function getMessage() {
   socket.emit('getMessage'); // Request a new message from the server
 }
 
+function addWavyLine(waveColor) {
+  let weight = random(4, 10);
+  let waveSpeed = map(weight, 2, 15, 0.01, 0.005);
+  let offset = waves.length * 1000;
+
+  // Use color from server or fallback
+  let col = waveColor ? color(...waveColor) : color(random(palette));
+  waves.push(new WavyLine(offset, col, weight, waveSpeed));
+
+  if (waves.length > 100) {
+    waves.shift(); // Limit total lines
+  }
+}
+
+
+/*
 function addRandomParticle(particleColor) {
   //let x = random(width);
   let x = random(width, width + (width / 2)); // Start offscreen to the right
@@ -341,4 +350,6 @@ function addRandomParticle(particleColor) {
   }
 
 }
+
+*/
 
