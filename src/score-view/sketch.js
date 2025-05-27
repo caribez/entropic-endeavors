@@ -46,6 +46,7 @@ function setup() {
     addWave(random(palette));
     firstWave = waves[0];
     firstWave.lifetime = 100000; // set it very long
+    firstWave.yBase = height / 2.5; // slightly under the title text
   //}
 
   
