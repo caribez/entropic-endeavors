@@ -41,7 +41,6 @@ function setup() {
   overlay = createGraphics(windowWidth, windowHeight);
   overlay.clear(); 
 
-
   //for (let i = 0; i < initialWaves; i++) {
     addWave(random(palette));
     firstWave = waves[0];
