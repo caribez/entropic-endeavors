@@ -1,4 +1,6 @@
 const waves = [];
+
+let firstWave; 
 let initialWaves = 1;
 let noiseScale = 0.02;
 let waveAmplitude = 200;
@@ -40,9 +42,13 @@ function setup() {
   overlay.clear(); 
 
 
-  for (let i = 0; i < initialWaves; i++) {
+  //for (let i = 0; i < initialWaves; i++) {
     addWave(random(palette));
-  }
+    firstWave = waves[0];
+    firstWave.lifetime = 100000; // set it very long
+  //}
+
+  
 
   textPosX = random(width);
   textPosY = random(height);
@@ -80,6 +86,9 @@ function setup() {
       socket.emit('start-performance');
       performanceRunning = true;
       startButton.html("Stop");
+
+      firstWave.lifetime = 12000;
+
       getMessage(); // Start requesting words when performance starts
 
       if (performanceSound && !performanceSound.isPlaying()) {
