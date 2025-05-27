@@ -77,7 +77,7 @@ function createUI() {
     btn.size(clampedSize, clampedSize);
     btn.style('border-radius', '50%');
     btn.style('background-color', direction.color);
-    btn.style('color', 'white');
+    btn.style('color', 'black');
     //btn.style('font-size', '1rem');
     btn.style('font-size', `${clampedSize * 0.2}px`); // Scale text (adjust multiplier as needed)
     btn.mousePressed(() => {
