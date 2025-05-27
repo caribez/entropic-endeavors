@@ -21,8 +21,8 @@ class WavyLine {
   // g is the Graphics object
   display(g) {
     g.beginShape();
-    for (let i = 0; i < resolution; i++) {
-      let x = map(i, 0, resolution - 1, 0, width);
+    for (let i = 0; i < WAVE_RESOLUTION; i++) {
+      let x = map(i, 0, WAVE_RESOLUTION - 1, 0, width);
       let t = frameCount * this.waveSpeed;
       let noiseInput = i * noiseScale + this.offset;
       let y = this.yBase + noise(noiseInput, t) * waveAmplitude - waveAmplitude / 2;

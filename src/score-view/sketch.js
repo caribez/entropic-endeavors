@@ -1,9 +1,5 @@
-
-const __DEV__ = true; // manually switch to false for production
-
-let waves = [];
+const waves = [];
 let initialWaves = 1;
-let resolution = 200;
 let noiseScale = 0.02;
 let waveAmplitude = 200;
 
@@ -12,60 +8,20 @@ let overlay;
 
 let timeElapsed;
 
-const palette = [
-  [230, 126, 126],
-  [230, 157, 126],
-  [230, 188, 126],
-  [230, 219, 126],
-  [209, 230, 126],
-  [178, 230, 126],
-  [147, 230, 126],
-  [126, 230, 136],
-  [126, 230, 167],
-  [126, 230, 198],
-  [126, 209, 230],
-  [126, 178, 230],
-  [126, 147, 230],
-  [136, 126, 230],
-  [167, 126, 230],
-  [198, 126, 230],
-  [230, 126, 219],
-  [230, 126, 188],
-  [230, 126, 157],
-  [230, 126, 126],
-];
-
-const textFonts = [
-  'Courier New',
-  'Verdana',
-  'Georgia',
-  'Times New Roman',
-];
-
 if (__DEV__) {
   let simulateButton;
 }
 
 let performanceStartTime = 0;
-let performanceDuration = 60000; // 60 seconds
+let performanceDuration = 120000; // 2 minutes
 
 const maxJitter = 12; // final maximum jitter
+
+let titleAlpha = 255;
 
 let startButton;
 let performanceRunning = false;
 let messages = [];
-let currentMessage = '';
-let fadeDuration = 2000; // Duration of fade effect in milliseconds
-let displayDuration = 1000; // Duration to display the message in milliseconds : SET SHORT FOR TESTING PURPOSES
-let backgroundOpacity = 2.1;
-let textOpacity = 5;
-let fadeInStart = 0;
-let fadeOutStart = 0;
-let displayStart = 0;
-let fadeIn = false;
-let fadeOut = false;
-let displaying = false;
-let textPosX, textPosY;
 
 const socket = io(); // Establish Socket.io connection
 
@@ -83,10 +39,9 @@ function setup() {
   overlay = createGraphics(windowWidth, windowHeight);
   overlay.clear(); // Start transparent
 
-  waves = [];
 
   for (let i = 0; i < initialWaves; i++) {
-    addWavyLine(random(palette));
+    addWave(random(palette));
   }
 
   textPosX = random(width);
@@ -109,7 +64,7 @@ function setup() {
         fadeIn = true;
         fadeInStart = millis();
 
-        addWavyLine(random(palette));
+        addWave(random(palette));
       }
     });
   }
@@ -160,7 +115,7 @@ function setup() {
       fadeInStart = millis(); // Record the start time for the fade in effect
 
       //addRandomParticle(data.color);
-      addWavyLine(data.color);
+      addWave(data.color);
 
     }
   });
@@ -178,19 +133,32 @@ function setup() {
 function draw() {
   let entropyFactor = 0;
   let entropyFactorCubic = 0;
+  let timeElapsed = 0;
   if (performanceRunning) {
-    let timeElapsed = millis() - performanceStartTime;
+    timeElapsed = millis() - performanceStartTime;
     entropyFactor = constrain(timeElapsed / performanceDuration, 0, 1);
     entropyFactorCubic = entropyFactor * entropyFactor;
   }
 
-
-  waveAmplitude = lerp(50, 1000, entropyFactor); 
+  waveAmplitude = lerp(50, 1000, entropyFactor);
   noiseScale = lerp(0.01, 0.05, entropyFactorCubic); // or more extreme if you want chaos
 
   trailsLayer.noFill();
 
-  trailsLayer.background(230, 255, 216, 5);
+  let performanceSineRate = TWO_PI / performanceDuration;
+
+  // Phase offsets in radians to spread out their low points
+  let phaseR = 0;               // Red starts at phase 0
+  let phaseG = TWO_PI / 3;      // Green starts 1/3 of a cycle ahead
+  let phaseB = TWO_PI * 2 / 3;  // Blue starts 2/3 of a cycle ahead
+
+
+  //trailsLayer.background(230, 255, 216, 5);
+  let r = map(sin(millis() * performanceSineRate * 5 + phaseR), -1, 1, 190, 255);
+  let g = map(sin(millis() * performanceSineRate * 4 + phaseG), -1, 1, 210, 255);
+  let b = map(sin(millis() * performanceSineRate * 2 + phaseB), -1, 1, 190, 255);
+
+  trailsLayer.background(r, g, b, 5);
 
   for (let i = waves.length - 1; i >= 0; i--) {
     let wave = waves[i];
@@ -210,25 +178,34 @@ function draw() {
     wave.display(trailsLayer);
   }
 
-  // Draw and update overlay
-  updateOverlay();
+  // Update overlay
+  updateOverlay(overlay, performanceRunning);
 
-  image(trailsLayer, 0, 0);  // draw the persistent particle trails
-  blendMode(MULTIPLY);       // hide white overlay background, preserve black text
-  image(overlay, 0, 0);      // draw fading text
-  blendMode(BLEND);          // reset
+  image(trailsLayer, 0, 0); // draw the persistent particle trails
+  blendMode(MULTIPLY); // hide white overlay background, preserve black text
+  image(overlay, 0, 0); // draw text layer
 
-if (__DEV__) {
-  noStroke();
-  fill(0, 150);
-  textSize(16);
-  textAlign(LEFT, BOTTOM);
-  text(`Entropy: ${nf(entropyFactor, 1, 3)}`, 10, height - 10);
-}
+  blendMode(BLEND); // reset blend mode
 
+  if (__DEV__) {
+    noStroke();
+    fill(0, 150);
+    textSize(16);
+    textAlign(LEFT, BOTTOM);
+    text(`Duration: ${nf(timeElapsed / 1000, 1, 3)} seconds`, 10, height - 26);
+    text(`Entropy: ${nf(entropyFactor, 1, 3)}`, 10, height - 10);
+  }
+
+  drawTitleText();
 
 } // end draw
 
+// Request a new message from the server
+function getMessage() {
+  socket.emit('getMessage');
+}
+
+// Calculate alpha depending on an object's age
 function calculateAlpha(wave, age) {
   let fadeInTime = wave.lifetime * 0.2; // first 20% of lifetime is fade-in
   let fullAlpha = alphaFromColor(wave.col);
@@ -242,75 +219,65 @@ function calculateAlpha(wave, age) {
   return alpha;
 }
 
-function setSafeRandomTextPosition(message, textSize = 48, margin = 10) {
-  overlay.textSize(textSize);
-  let w = overlay.textWidth(message);
-  let h = overlay.textAscent() + overlay.textDescent();
-
-  let x = random(width);
-  let y = random(height);
-
-  if (x + w > width - margin) x = width - w - margin;
-  if (x < margin) x = margin;
-
-  if (y + h > height - margin) y = height - h - margin;
-  if (y < h + margin) y = h + margin;
-
-  return [x, y];
-}
-
 function resetPerformance() {
 
   performanceStartTime = 0;
 
-  trailsLayer.clear();       // clear the particle trails
-  trailsLayer.background(255); // reset to white background
-
-  overlay.clear();           // clear fading text overlay
+  // reset to white background
+  trailsLayer.background(255);
+  overlay.background(255);
 
   currentMessage = '';
   fadeIn = false;
   fadeOut = false;
   displaying = false;
 
+  waves.length = 0;
+
   for (let i = 0; i < initialWaves; i++) {
-    addWavyLine();
+    addWave();
   }
 }
 
-function updateOverlay() {
-  overlay.background(255, backgroundOpacity);
-  //fill(0);
-  overlay.textSize(48);
+// Fades in and out depending on if performance is running
+function drawTitleText() {
+  let fadeSpeed = 5;
 
-  if (fadeIn) {
-    let fadeInElapsedTime = millis() - fadeInStart;
-    let fadeInAlpha = map(fadeInElapsedTime, 0, fadeDuration, 0, 255);
-    overlay.fill(0, textOpacity);
-    overlay.text(currentMessage, textPosX, textPosY);
-
-    if (fadeInElapsedTime > fadeDuration) {
-      fadeIn = false;
-      displaying = true;
-      displayStart = millis();
-    }
-  } else if (displaying) {
-    let displayElapsedTime = millis() - displayStart;
-    if (displayElapsedTime > displayDuration) {
-      displaying = false;
-
-      if (performanceRunning) {
-        getMessage(); // Fetch a new message after fade out
-      }
-    }
+  if (performanceRunning) {
+    titleAlpha -= fadeSpeed;
+  } else {
+    titleAlpha += fadeSpeed;
   }
+
+  titleAlpha = constrain(titleAlpha, 0, 255);
+
+  // Skip rendering if fully transparent
+  if (titleAlpha <= 0) return;
+
+  push();
+
+  blendMode(MULTIPLY);
+
+  textFont('Times New Roman');
+  textSize(96);
+  textAlign(CENTER, CENTER);
+
+  // Oscillating color
+  let t = millis() * 0.0001;
+  let r = map(sin(t), -1, 1, 10, 90);
+  let g = map(sin(t + 2), -1, 1, 15, 90);
+  let b = map(sin(t + 3.5), -1, 1, 10, 90);
+
+  fill(r, g, b, titleAlpha);
+  noStroke();
+
+  text('ENTROPIC ENDEAVOURS', width / 2, height / 3);
+
+  pop();
 }
 
-function getMessage() {
-  socket.emit('getMessage'); // Request a new message from the server
-}
-
-function addWavyLine(waveColor) {
+// Add a visual wave
+function addWave(waveColor) {
   let weight = random(4, 15);
   let waveSpeed = map(weight, 4, 15, 0.01, 0.005);
   let offset = waves.length * 1000;
@@ -319,7 +286,8 @@ function addWavyLine(waveColor) {
   let col = waveColor ? color(...waveColor) : color(random(palette));
   waves.push(new WavyLine(offset, col, weight, waveSpeed));
 
-  if (waves.length > 100) {
-    waves.shift(); // Limit total lines
+  // Limit total lines to MAX_WAVES
+  if (waves.length > MAX_WAVES) {
+    waves.shift();
   }
 }
